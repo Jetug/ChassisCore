@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class CustomHandRenderer extends CustomGeoRenderer<HandEntity> {
     protected static CustomHandRenderer handRenderer;
     protected static final HandModel handModel = new HandModel();
-    protected HandEntity currentChassis;
 
 //    static {
 //        AnimationController.addModelFetcher(animatable -> animatable instanceof HandEntity ? handModel : null);
@@ -32,17 +31,7 @@ public class CustomHandRenderer extends CustomGeoRenderer<HandEntity> {
     }
 
     public void render(HandEntity animatable, PoseStack poseStack, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-        currentChassis = animatable;
-        var texture = getTextureLocation(animatable);
-        if(texture == null) return;
-        var renderTypeNew = RenderType.armorCutoutNoCull(texture);
-        //poseStack.pushPose();
-        poseStack.scale(1.0f, 1.0f, 1.0f);
-        poseStack.translate(0.0d, 0.0d, 0.0d);
-        super.render(animatable, poseStack, bufferSource, renderTypeNew, bufferSource.getBuffer(renderTypeNew), partialTick,  packedLight);
-        //poseStack.popPose();
-
-        //super.render(animatable, poseStack, bufferSource, packedLight);
+        super.render(animatable, poseStack, bufferSource, partialTick,  packedLight);
     }
 
 //    @Override

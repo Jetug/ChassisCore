@@ -15,10 +15,10 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
-import static com.jetug.chassis_core.client.render.utils.GeoUtils.setHeadAnimation;
-import static com.jetug.chassis_core.client.render.utils.ResourceHelper.getChassisResource;
+import static com.jetug.chassis_core.client.render.utils.GeoUtils.*;
+import static com.jetug.chassis_core.client.render.utils.ResourceHelper.*;
 import static com.jetug.chassis_core.common.data.constants.Bones.*;
-import static com.jetug.chassis_core.common.data.constants.Resources.resourceLocation;
+import static com.jetug.chassis_core.common.data.constants.Resources.*;
 
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -49,7 +49,7 @@ public class ChassisModel<Type extends WearableChassis> extends GeoModel<Type>
     @Override
     public void setCustomAnimations(Type animatable, long instanceId, AnimationState<Type> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
-        setHeadAnimation(animatable, this.getAnimationProcessor());
+        setHeadAnimation(animatable, this.getAnimationProcessor(), animationState);
     }
 
 //    @Override
