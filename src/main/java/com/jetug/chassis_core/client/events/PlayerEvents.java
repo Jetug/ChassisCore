@@ -3,6 +3,7 @@ package com.jetug.chassis_core.client.events;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderArmEvent;
