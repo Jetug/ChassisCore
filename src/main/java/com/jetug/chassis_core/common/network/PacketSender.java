@@ -1,12 +1,10 @@
 package com.jetug.chassis_core.common.network;
 
-import com.jetug.chassis_core.common.data.enums.ActionType;
-import com.jetug.chassis_core.common.network.actions.Action;
-import com.jetug.chassis_core.common.network.packet.ActionPacket;
-import com.jetug.chassis_core.common.network.packet.GenericPacket;
+import com.jetug.chassis_core.common.data.enums.*;
+import com.jetug.chassis_core.common.network.actions.*;
+import com.jetug.chassis_core.common.network.packet.*;
 
-import static com.jetug.chassis_core.common.network.PacketHandler.sendToAllPlayers;
-import static com.jetug.chassis_core.common.network.PacketHandler.sendToServer;
+import static com.jetug.chassis_core.common.network.PacketHandler.*;
 
 @SuppressWarnings("rawtypes")
 public class PacketSender {
@@ -18,11 +16,11 @@ public class PacketSender {
         sendToServer(new GenericPacket(entityId, action));
     }
 
-    public static void doClientAction(Action action) {
-        sendToAllPlayers(new GenericPacket(-1, action));
-    }
-
-    public static void doClientAction(Action action, int entityId) {
-        sendToAllPlayers(new GenericPacket(entityId, action));
-    }
+//    public static void doClientAction(Action action) {
+//        sendToAllPlayers(new GenericPacket(-1, action));
+//    }
+//
+//    public static void doClientAction(Action action, int entityId) {
+//        sendToAllPlayers(new GenericPacket(entityId, action));
+//    }
 }

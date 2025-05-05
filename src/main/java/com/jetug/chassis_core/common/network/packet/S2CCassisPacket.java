@@ -12,8 +12,7 @@ import java.util.function.Supplier;
 public class S2CCassisPacket {
     public CompoundTag nbt = null;
 
-    public S2CCassisPacket() {
-    }
+    public S2CCassisPacket() {}
 
     public S2CCassisPacket(ArmorData armorData) {
         nbt = armorData.serializeNBT();

@@ -360,6 +360,12 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
         return this.getAttributeValue(Attributes.JUMP_STRENGTH);
     }
 
+    public void exitArmor(){
+        if(hasPassenger()){
+            getControllingPassenger().stopRiding();
+        }
+    }
+
 //    @Override
 //    public boolean causeFallDamage(float height, float p_225503_2_, @NotNull DamageSource damageSource) {
 //        pushEntitiesAround();

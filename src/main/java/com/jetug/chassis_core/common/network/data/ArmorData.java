@@ -1,8 +1,7 @@
 package com.jetug.chassis_core.common.network.data;
 
-import com.jetug.chassis_core.common.network.PacketHandler;
-import com.jetug.chassis_core.common.network.packet.C2SChassisPacket;
-import com.jetug.chassis_core.common.network.packet.S2CCassisPacket;
+import com.jetug.chassis_core.common.network.*;
+import com.jetug.chassis_core.common.network.packet.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,9 +41,9 @@ public class ArmorData {
         attackCharge = nbt.getInt(ATTACK_CHARGE);
     }
 
-    public void sentToClientPlayer(ServerPlayer player) {
-        PacketHandler.sendTo(new S2CCassisPacket(this), player);
-    }
+//    public void sentToClientPlayer(ServerPlayer player) {
+//        PacketHandler.sendTo(new S2CCassisPacket(this), player);
+//    }
 
     public void sentToServer() {
         PacketHandler.sendToServer(new C2SChassisPacket(this));

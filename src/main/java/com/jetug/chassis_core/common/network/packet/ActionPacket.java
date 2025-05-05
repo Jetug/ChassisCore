@@ -35,7 +35,7 @@ public class ActionPacket {
         var armor = (WearableChassis) player.getVehicle();
 
         switch (message.action) {
-            case DISMOUNT -> player.stopRiding();
+            case DISMOUNT -> armor.exitArmor();
             case OPEN_GUI -> armor.openGUI(player);
 //            case ADD_ATTACK_CHARGE -> armor.addAttackCharge();
 //            case RESET_ATTACK_CHARGE -> armor.resetAttackCharge();

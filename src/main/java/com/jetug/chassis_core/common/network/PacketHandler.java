@@ -30,7 +30,6 @@ public class PacketHandler {
         HANDLER.registerMessage(disc++, S2CCassisPacket.class, S2CCassisPacket::write, S2CCassisPacket::read, S2CCassisPacket::handle);
         HANDLER.registerMessage(disc++, GenericPacket.class, GenericPacket::write, GenericPacket::read, GenericPacket::handle);
         HANDLER.registerMessage(disc++, C2SChassisPacket.class, C2SChassisPacket::write, C2SChassisPacket::read, C2SChassisPacket::handle);
-//		HANDLER.registerMessage(disc++, InventoryPacket.class  , InventoryPacket::write	 , InventoryPacket::read , InventoryPacket::handle	);
     }
 
     public static void sendToServer(Object msg) {
@@ -38,16 +37,14 @@ public class PacketHandler {
     }
 
     public static void sendTo(Object msg, ServerPlayer player) {
-        if (!(player instanceof FakePlayer)) {
-            HANDLER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-        }
+        HANDLER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void sendToAllPlayers(Object msg) {
         var server = ServerLifecycleHooks.getCurrentServer();
-        List<ServerPlayer> list = server.getPlayerList().getPlayers();
-        for (ServerPlayer e : list) {
-            sendTo(msg, e);
+        var list = server.getPlayerList().getPlayers();
+        for (ServerPlayer player : list) {
+            sendTo(msg, player);
         }
     }
 }
