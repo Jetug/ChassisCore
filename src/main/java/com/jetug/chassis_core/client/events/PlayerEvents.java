@@ -22,24 +22,24 @@ public class PlayerEvents {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent()
     public static void onRenderHand(RenderArmEvent event) {
-        if (!isLocalWearingChassis() || !getLocalPlayerChassis().renderHand()) return;
-
-        var poseStack = event.getPoseStack();
-        poseStack.pushPose();
-        {
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90));
-            poseStack.translate(-0.15, -0.1, -0.5);
-
-            CustomHandRenderer.getHandRenderer().render(
-                    poseStack,
-                    getLocalPlayerChassis().getHandEntity(),
-                    event.getMultiBufferSource(),
-                    null,
-                    null,
-                    event.getPackedLight());
-        }
-        poseStack.popPose();
-        event.setCanceled(true);
+//        if (!isLocalWearingChassis() || !getLocalPlayerChassis().renderHand()) return;
+//
+//        var poseStack = event.getPoseStack();
+//        poseStack.pushPose();
+//        {
+//            poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+//            poseStack.translate(-0.15, -0.1, -0.5);
+//
+//            CustomHandRenderer.getHandRenderer().render(
+//                    poseStack,
+//                    getLocalPlayerChassis().getHandEntity(),
+//                    event.getMultiBufferSource(),
+//                    null,
+//                    null,
+//                    event.getPackedLight());
+//        }
+//        poseStack.popPose();
+//        event.setCanceled(true);
     }
 
 //    @OnlyIn(Dist.CLIENT)

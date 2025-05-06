@@ -7,7 +7,8 @@
     "client.CreativeInventoryScreenMixin",
     "client.ForgeIngameGuiMixin",
     "client.GameRendererMixin",
-    "client.InventoryScreenMixin"
+    "client.InventoryScreenMixin",
+    "client.ModelPartMixin"
   ],
   "injectors": {
     "defaultRequire": 1

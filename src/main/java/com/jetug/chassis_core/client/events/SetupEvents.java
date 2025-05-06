@@ -5,13 +5,13 @@ import com.jetug.chassis_core.client.ClientConfig;
 import com.jetug.chassis_core.client.KeyBindings;
 import com.jetug.chassis_core.client.input.DoubleClickController;
 import com.jetug.chassis_core.client.input.LongClickController;
+import com.jetug.chassis_core.client.render.renderers.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import static com.jetug.chassis_core.client.render.renderers.CustomHandRenderer.registerHandRenderer;
 
 @Mod.EventBusSubscriber(modid = ChassisCore.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class SetupEvents {
@@ -25,7 +25,7 @@ public final class SetupEvents {
     public static void clientSetup(FMLClientSetupEvent event) {
         ClientConfig.modResourceManager.loadConfigs();
         registerClickListeners();
-        registerHandRenderer();
+        CustomHandRenderer.registerHandRenderer();
     }
 
     private static void registerClickListeners() {
