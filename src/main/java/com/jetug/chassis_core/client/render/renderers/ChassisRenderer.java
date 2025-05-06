@@ -43,7 +43,6 @@ public class ChassisRenderer<T extends WearableChassis> extends DynamicGeoEntity
 
     public ChassisRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
         super(renderManager, model);
-//        addRenderLayer(new EquipmentLayer<>(this));
         addRenderLayer(new HeldItemLayer<>(this, this::getItemForBone));
     }
 

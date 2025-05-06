@@ -1,17 +1,14 @@
 package com.jetug.chassis_core.common.foundation.entity;
 
-import com.jetug.chassis_core.client.ClientConfig;
-import com.jetug.chassis_core.client.render.utils.GeoUtils;
-import com.jetug.chassis_core.client.render.utils.ResourceHelper;
-import com.jetug.chassis_core.common.data.json.ChassisConfig;
-import com.jetug.chassis_core.common.data.json.EquipmentConfig;
-import com.jetug.chassis_core.common.events.ContainerChangedEvent;
-import com.jetug.chassis_core.common.foundation.item.ChassisArmor;
-import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
-import com.jetug.chassis_core.common.foundation.item.StackUtils;
-import com.jetug.chassis_core.common.network.data.ArmorData;
-import com.jetug.chassis_core.common.util.helpers.timer.TickTimer;
-import mod.azure.azurelib.cache.object.GeoBone;
+import com.jetug.chassis_core.client.*;
+import com.jetug.chassis_core.client.render.utils.*;
+import com.jetug.chassis_core.common.data.json.*;
+import com.jetug.chassis_core.common.events.*;
+import com.jetug.chassis_core.common.foundation.item.*;
+import com.jetug.chassis_core.common.network.PacketHandler;
+import com.jetug.chassis_core.common.network.packet.S2CCassisPacket;
+import com.jetug.chassis_core.common.util.helpers.timer.*;
+import mod.azure.azurelib.cache.object.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -190,19 +187,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
             res.addAll(StackUtils.getAttachments(item));
         return res;
     }
-//    protected void createPartIdMap(){
-//        var i = 0;
-//        partIdMap.put(HELMET         , i++);
-//        partIdMap.put(BODY_ARMOR     , i++);
-//        partIdMap.put(LEFT_ARM_ARMOR , i++);
-//        partIdMap.put(RIGHT_ARM_ARMOR, i++);
-//        partIdMap.put(LEFT_LEG_ARMOR , i++);
-//        partIdMap.put(RIGHT_LEG_ARMOR, i++);
-//        inventorySize = i;
-
-//    }
-
-//    private final Map<String, EquipmentConfig> history = new HashMap<>();
 
     @OnlyIn(Dist.CLIENT)
     public Collection<GeoBone> getAttachmentForBone(String chassisBone) {
@@ -228,7 +212,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         super.tick();
 
         syncDataWithClient();
-//        syncDataWithServer();
 
         if(isClientSide) {
             if (tickTimer == 0) {
@@ -336,25 +319,9 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return itemStack.getMaxDamage() - itemStack.getDamageValue();
     }
 
-    public ArmorData getArmorData() {
-        var data = new ArmorData(getId());
-        data.inventory = serializedInventory;
-        return data;
-    }
-
-    public void setArmorData(ArmorData data) {
-        if (isClientSide) setClientArmorData(data);
-        else setServerArmorData(data);
-    }
-
-    public void setClientArmorData(ArmorData data) {
-        deserializeInventory(inventory, data.inventory);
-    }
-
-    public void setServerArmorData(ArmorData data) {
-        //deserializeInventory(inventory, data.inventory);
-        //heat = data.heat;
-        //setAttackCharge(data.attackCharge);
+    public void setArmorData(ListTag nbtTags) {
+        if (isClientSide)
+            deserializeInventory(inventory, nbtTags);
     }
 
     public void setInventory(ListTag tags) {
@@ -378,11 +345,9 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     }
 
     protected void syncDataWithClient() {
-        if (isServerSide) getArmorData().sentToClient();
-    }
-
-    protected void syncDataWithServer() {
-        if (isClientSide) getArmorData().sentToServer();
+        if (isServerSide) {
+            PacketHandler.sendToAllPlayers(new S2CCassisPacket(this.getId(), serializedInventory));
+        }
     }
 
     protected void saveInventory(CompoundTag compound) {
@@ -406,8 +371,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         if (isClientSide)
             updateBones();
     }
-
-
 
     @OnlyIn(Dist.CLIENT)
     protected void updateBones() {

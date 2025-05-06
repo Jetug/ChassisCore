@@ -1,13 +1,9 @@
 package com.jetug.chassis_core.common.network;
 
 import com.jetug.chassis_core.ChassisCore;
-import com.jetug.chassis_core.common.network.packet.ActionPacket;
-import com.jetug.chassis_core.common.network.packet.C2SChassisPacket;
-import com.jetug.chassis_core.common.network.packet.GenericPacket;
-import com.jetug.chassis_core.common.network.packet.S2CCassisPacket;
+import com.jetug.chassis_core.common.network.packet.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -29,7 +25,6 @@ public class PacketHandler {
         HANDLER.registerMessage(disc++, ActionPacket.class, ActionPacket::write, ActionPacket::read, ActionPacket::handle);
         HANDLER.registerMessage(disc++, S2CCassisPacket.class, S2CCassisPacket::write, S2CCassisPacket::read, S2CCassisPacket::handle);
         HANDLER.registerMessage(disc++, GenericPacket.class, GenericPacket::write, GenericPacket::read, GenericPacket::handle);
-        HANDLER.registerMessage(disc++, C2SChassisPacket.class, C2SChassisPacket::write, C2SChassisPacket::read, C2SChassisPacket::handle);
     }
 
     public static void sendToServer(Object msg) {
