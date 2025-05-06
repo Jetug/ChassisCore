@@ -2,6 +2,7 @@ package com.jetug.chassis_core.common.network.actions;
 
 import com.jetug.chassis_core.common.input.InputKey;
 import com.jetug.chassis_core.common.input.KeyAction;
+import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -37,8 +38,8 @@ public class InputAction extends Action<InputAction> {
     }
 
     @Override
-    public void doServerAction(InputAction message, Supplier<NetworkEvent.Context> context, int entityId) {
-        var player = context.get().getSender();
+    public void doServerAction(InputAction message, MessageContext context, int entityId) {
+        var player = context.getPlayer();
         onKeyInput(message.key, message.action, player);
     }
 }

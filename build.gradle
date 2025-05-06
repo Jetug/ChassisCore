@@ -94,12 +94,20 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenLocal()
+    maven {
+        url "https://www.cursemaven.com"
+    }
     maven { url 'https://maven.azuredoom.com/mods' }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("mod.azure.azurelib:azurelib-neo-1.20.1:2.0.30")
+    implementation fg.deobf("curse.maven:framework-549225:5911986")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     testAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

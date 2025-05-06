@@ -1,6 +1,7 @@
 package com.jetug.chassis_core.common.network.actions;
 
 import com.jetug.chassis_core.common.network.ActionRegistry;
+import com.mrcrayfish.framework.api.network.MessageContext;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.function.Supplier;
@@ -35,10 +36,10 @@ public abstract class Action<T extends Action<T>> {
         return this.getClass().getCanonicalName();
     }
 
-    public void doServerAction(T message, Supplier<Context> context, int entityId) {
+    public void doServerAction(T message, MessageContext context, int entityId) {
     }
 
-    public void doClientAction(T message, Supplier<Context> context, int entityId) {
+    public void doClientAction(T message, MessageContext context, int entityId) {
     }
 
     public abstract void write(FriendlyByteBuf buffer);

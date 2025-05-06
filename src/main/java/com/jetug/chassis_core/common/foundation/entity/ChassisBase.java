@@ -341,7 +341,7 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
 
     protected void syncDataWithClient() {
         if (isServerSide) {
-            PacketHandler.sendToTrackingEntity(() -> this, new S2CInventoryPacket(this.getId(), serializedInventory));
+            PacketHandler.getPlayChannel().sendToTrackingEntity(() -> this, new S2CInventoryPacket(this.getId(), serializedInventory));
         }
     }
 
