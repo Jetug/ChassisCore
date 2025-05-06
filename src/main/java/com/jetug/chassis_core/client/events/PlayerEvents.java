@@ -1,19 +1,13 @@
 package com.jetug.chassis_core.client.events;
 
-import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
-import com.mojang.math.Axis;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderArmEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import com.jetug.chassis_core.client.render.renderers.*;
+import com.mojang.math.*;
+import net.minecraftforge.api.distmarker.*;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.eventbus.api.*;
+import net.minecraftforge.fml.common.*;
 
-import static com.jetug.chassis_core.client.events.InputEvents.*;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.*;
-import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPlayerChassis;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class PlayerEvents {

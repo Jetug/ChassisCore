@@ -33,7 +33,7 @@ public class ChassisCore {
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(PacketHandler::register);
+        PacketHandler.register();
     }
 
     private void register() {

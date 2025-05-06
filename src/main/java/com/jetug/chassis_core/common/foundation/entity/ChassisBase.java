@@ -6,7 +6,7 @@ import com.jetug.chassis_core.common.data.json.*;
 import com.jetug.chassis_core.common.events.*;
 import com.jetug.chassis_core.common.foundation.item.*;
 import com.jetug.chassis_core.common.network.PacketHandler;
-import com.jetug.chassis_core.common.network.packet.S2CCassisPacket;
+import com.jetug.chassis_core.common.network.packet.*;
 import com.jetug.chassis_core.common.util.helpers.timer.*;
 import mod.azure.azurelib.cache.object.*;
 import net.minecraft.nbt.CompoundTag;
@@ -90,6 +90,8 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     private ChassisConfig config = null;
     private ListTag serializedInventory;
     private Container previousContainer;
+    private int tickTimer = 10;
+    private int tickTimer5 = 5;
 
     public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<String, Integer> partIdMap) {
         super(pEntityType, pLevel);
@@ -161,19 +163,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         }
     }
 
-//    public ArrayList<String> getHiddenBones(){
-//        var hidden = new ArrayList<String>();
-//        for(var item : getVisibleEquipment()) {
-//            var equipment = getAsChassisEquipment(item);
-//            var allMods = equipment.getConfig().mods.clone();
-//            var mods = StackUtils.getAttachments(item);
-//
-//            Arrays.stream(allMods).toList().removeAll(mods);
-//            hidden.add(Arrays.toString(allMods));
-//        }
-//        return hidden;
-//    }
-
     public ArrayList<String> getMods() {
         var res = new ArrayList<String>();
         for (var config : getItemConfigs())
@@ -205,19 +194,23 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return val != null ? val : 0;
     }
 
-    private int tickTimer = 10;
-
     @Override
     public void tick() {
         super.tick();
-
-        syncDataWithClient();
 
         if(isClientSide) {
             if (tickTimer == 0) {
                 tickTimer = 10;
                 updateBones();
             } else tickTimer--;
+        }
+        else {
+            tickTimer5 = Math.max(tickTimer5 - 1, 0);
+
+            if(tickTimer5 == 0) {
+                syncDataWithClient();
+                tickTimer5 = 50;
+            }
         }
     }
 
@@ -266,6 +259,7 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     public void containerReallyChanged(Container container) {
         updateParams();
         serializedInventory = serializeInventory(inventory);
+        syncDataWithClient();
         MinecraftForge.EVENT_BUS.post(new ContainerChangedEvent(this));
     }
 
@@ -342,11 +336,12 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         }
         this.inventory.addListener(this);
         serializedInventory = serializeInventory(inventory);
+        syncDataWithClient();
     }
 
     protected void syncDataWithClient() {
         if (isServerSide) {
-            PacketHandler.sendToAllPlayers(new S2CCassisPacket(this.getId(), serializedInventory));
+            PacketHandler.sendToTrackingEntity(() -> this, new S2CInventoryPacket(this.getId(), serializedInventory));
         }
     }
 
