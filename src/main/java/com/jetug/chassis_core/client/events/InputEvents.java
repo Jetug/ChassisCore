@@ -1,5 +1,6 @@
 package com.jetug.chassis_core.client.events;
 
+import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.client.KeyBindings;
 import com.jetug.chassis_core.client.utils.KeyUtils;
 import com.jetug.chassis_core.common.input.CommonInputHandler;
@@ -12,18 +13,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-import static com.jetug.chassis_core.client.ClientConfig.OPTIONS;
+import static com.jetug.chassis_core.client.ClientConfig.*;
+import static com.jetug.chassis_core.client.KeyBindings.*;
 import static com.jetug.chassis_core.common.network.PacketSender.doServerAction;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPlayer;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.stopWearingArmor;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class InputEvents {
-    public static float X = 0;
-    public static float Y = 0;
-    public static float Z = 0;
+    public static int X = 0;
+    public static int Y = 0;
+    public static int Z = 0;
+    public static boolean isHidden = false;
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent()
@@ -40,26 +44,8 @@ public class InputEvents {
         else
             action = KeyAction.REPEAT;
 
-
-        if(event.getAction() == GLFW.GLFW_PRESS){
-            if(Minecraft.getInstance().player.isShiftKeyDown()){
-                switch (event.getKey()) {
-
-                }
-            }
-            else {
-                switch (event.getKey()) {
-                    case GLFW.GLFW_KEY_X -> X += 0.05f;
-                    case GLFW.GLFW_KEY_Y -> Y += 0.05f;
-                    case GLFW.GLFW_KEY_Z -> Z += 0.05f;
-                    case GLFW.GLFW_KEY_C -> X -= 0.05f;
-                    case GLFW.GLFW_KEY_U -> Y -= 0.05f;
-                    case GLFW.GLFW_KEY_V -> Z -= 0.05f;
-                }
-            }
-        }
-
         handleInput(event.getKey(), action);
+        handleDebugKeys(event);
         //CommonInputHandler.onKeyInput(InputKey.getByKey(event.getKey()), action, getLocalPlayer());
     }
 
@@ -67,8 +53,6 @@ public class InputEvents {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent()
     public static void onMouseKeyInput(InputEvent.MouseButton event) {
-        //if (isNotInGame()) return;
-
         switch (event.getAction()) {
             case GLFW.GLFW_PRESS -> {
 
@@ -76,15 +60,8 @@ public class InputEvents {
             case GLFW.GLFW_RELEASE -> {
                 if (event.getButton() != OPTIONS.keyUse.getKey().getValue() && isNotInGame()) return;
                 handleInput(event.getButton(), KeyAction.RELEASE);
-//                getTargetedEntity(getLocalPlayer(), 5).ifPresent((e) ->{
-//                    System.out.println(e);
-//                });
-//                var t = getViewTarget(getLocalPlayer());
-//                var tt = t;
             }
         }
-
-        //CommonInputHandler.onKeyInput(InputKey.getByKey(event.getButton()), KeyAction.RELEASE,  getLocalPlayer());
     }
 
     public static void onDoubleClick(InputEvent.Key event) {
@@ -94,7 +71,6 @@ public class InputEvents {
 
     public static void onLongClick(int key, int ticks) {
         if (isNotInGame()) return;
-        //CommonInputHandler.onKeyInput(InputKey.getByKey(key), KeyAction.LONG_PRESS,  getLocalPlayer());
         handleInput(key, KeyAction.LONG_PRESS);
     }
 
@@ -111,5 +87,32 @@ public class InputEvents {
 
     public static boolean isNotInGame() {
         return Minecraft.getInstance().screen != null;
+    }
+
+    private static void handleDebugKeys(InputEvent.@NotNull Key event) {
+        if (event.getAction() == GLFW.GLFW_PRESS || event.getAction() == GLFW.GLFW_REPEAT) {
+            if (ChassisCore.isDebugging()) {
+                int key = event.getKey();
+                if (key == KEY_DEBUG_X_ADD.getKey().getValue()) {
+                    X += 1;
+                } else if (key == KEY_DEBUG_Y_ADD.getKey().getValue()) {
+                    Y += 1;
+                } else if (key == KEY_DEBUG_Z_ADD.getKey().getValue()) {
+                    Z += 1;
+                } else if (key == KEY_DEBUG_X_SUB.getKey().getValue()) {
+                    X -= 1;
+                } else if (key == KEY_DEBUG_Y_SUB.getKey().getValue()) {
+                    Y -= 1;
+                } else if (key == KEY_DEBUG_Z_SUB.getKey().getValue()) {
+                    Z -= 1;
+                } else if (key == KEY_DEBUG_SHOW.getKey().getValue()) {
+                    isHidden = !isHidden;
+                } else if (key == KEY_DEBUG_ZERO.getKey().getValue()) {
+                    X = 0;
+                    Y = 0;
+                    Z = 0;
+                }
+            }
+        }
     }
 }

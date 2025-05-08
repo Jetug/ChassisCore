@@ -12,6 +12,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +23,10 @@ public class ChassisCore {
     public static final String MOD_ID = "chassis_core";
     public static final Logger LOGGER = LogManager.getLogger();
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+
+    public static boolean isDebugging() {
+        return !FMLEnvironment.production;
+    }
 
     public ChassisCore() {
         register();
