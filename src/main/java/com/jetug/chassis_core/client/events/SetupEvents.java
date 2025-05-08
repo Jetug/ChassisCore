@@ -25,7 +25,6 @@ public final class SetupEvents {
     public static void clientSetup(FMLClientSetupEvent event) {
         ClientConfig.modResourceManager.loadConfigs();
         registerClickListeners();
-        CustomHandRenderer.registerHandRenderer();
     }
 
     private static void registerClickListeners() {

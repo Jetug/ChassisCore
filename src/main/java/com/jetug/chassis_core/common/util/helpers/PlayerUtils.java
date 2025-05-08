@@ -2,8 +2,10 @@ package com.jetug.chassis_core.common.util.helpers;
 
 import com.jetug.chassis_core.common.data.enums.ActionType;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -52,5 +54,12 @@ public class PlayerUtils {
             doServerAction(ActionType.DISMOUNT);
             player.setInvisible(false);
         }
+    }
+
+    public static void renderHand(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+        getLocalPlayerChassis().getHandRenderer().render(
+                poseStack,
+                multiBufferSource,
+                packedLight);
     }
 }
