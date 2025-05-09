@@ -22,10 +22,7 @@ public abstract class ModelPartMixin {
         if (playerModel.rightArm.equals(this) && isLocalWearingChassis()) {
             poseStack.pushPose();
             {
-//                poseStack.mulPose(Axis.ZP.rotationDegrees(90));
-//                poseStack.translate(-0.15, -0.1, -0.5);
-//                poseStack.translate(-X / 10D / 16D, Y / 10D / 16D,  Z / 10D / 16D);
-                poseStack.translate(-6 / 10D / 16D, -63 / 10D / 16D,  -105 / 10D / 16D);
+                poseStack.translate(-12 / 10D / 16D, -63 / 10D / 16D,  -105 / 10D / 16D);
                 renderHand(poseStack, null, packedLight);
             }
             poseStack.popPose();
