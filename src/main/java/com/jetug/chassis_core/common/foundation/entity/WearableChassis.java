@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.Global;
 import com.jetug.chassis_core.client.animators.HandAnimator;
-import com.jetug.chassis_core.client.model.HandModel;
+import com.jetug.chassis_core.client.model.RightHandModel;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
 import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
 import com.jetug.chassis_core.common.util.helpers.Speedometer;
@@ -43,7 +43,7 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
     public static final float ROTATION = (float) Math.PI / 180F;
     public static final int EFFECT_DURATION = 9;
     public static final HandAnimator HAND_ENTITY = new HandAnimator();
-    private static final Lazy<CustomHandRenderer> HAND_RENDERER = Lazy.of(() -> new CustomHandRenderer(new HandModel()));
+    private static final Lazy<CustomHandRenderer> HAND_RENDERER = Lazy.of(() -> new CustomHandRenderer());
     public static final ResourceLocation DEFAULT_ICON = resourceLocation("textures/item/chassis.png");
     public static final float STEP_HEIGHT = 0.5f;
     public final Speedometer speedometer = new Speedometer(this);

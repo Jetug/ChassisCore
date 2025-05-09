@@ -11,6 +11,7 @@ import mod.azure.azurelib.core.animation.AnimationState;
 import mod.azure.azurelib.model.data.EntityModelData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -51,14 +52,28 @@ public class GeoUtils {
         return AzureLibCache.getBakedModels().get(location);
     }
 
-//    @Nullable
-//    public static GeoBone getFrameBone(AnimatedGeoModel provider, String name){
-//        return (GeoBone) provider.getAnimationProcessor().getBone(name);
-//    }
-
     @Nullable
     public static GeoBone getBone(ResourceLocation resourceLocation, String name) {
         var model = getModel(resourceLocation);
         return model == null ? null : model.getBone(name).orElse(null);
+    }
+
+    public static Vec3 getRot(CoreGeoBone bone){
+        return new Vec3(bone.getRotX(), bone.getRotY(), bone.getRotZ());
+    }
+    public static Vec3 getPos(CoreGeoBone bone){
+        return new Vec3(bone.getPosX(), bone.getPosY(), bone.getPosZ());
+    }
+
+    public static void setRot(CoreGeoBone bone, Vec3 pos){
+        bone.setRotX((float) pos.x);
+        bone.setRotX((float) pos.y);
+        bone.setRotX((float) pos.z);
+    }
+
+    public static void setPos(CoreGeoBone bone, Vec3 pos){
+        bone.setPosX((float) pos.x);
+        bone.setPosY((float) pos.y);
+        bone.setPosZ((float) pos.z);
     }
 }

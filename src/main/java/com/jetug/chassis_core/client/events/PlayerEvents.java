@@ -1,13 +1,13 @@
 package com.jetug.chassis_core.client.events;
 
 import com.mojang.math.Axis;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraftforge.api.distmarker.*;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.*;
 import net.minecraftforge.fml.common.*;
 
 import static com.jetug.chassis_core.client.events.InputEvents.*;
-import static com.jetug.chassis_core.client.render.renderers.CustomHandRenderer.*;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.*;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
@@ -27,11 +27,19 @@ public class PlayerEvents {
             var poseStack = event.getPoseStack();
             poseStack.pushPose();
             {
+                var isRight = event.getArm() == HumanoidArm.RIGHT;
+                var side = isRight ? 1 : -1;
                 poseStack.mulPose(Axis.XP.rotationDegrees(90));
-                poseStack.translate(18 / 10D / 16D, 91 / 10D / 16D,  -154 / 10D / 16D);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+                if(isRight) {
+                    poseStack.translate(18 / 10D / 16D, 91 / 10D / 16D, -155 / 10D / 16D);
+                }
+                else {
+                    poseStack.translate(124 / 10D / 16D, 106 / 10D / 16D,  -155 / 10D / 16D);
+                }
 
-                renderHand(poseStack, event.getMultiBufferSource(), event.getPackedLight());
+                poseStack.mulPose(Axis.ZP.rotationDegrees(180 * side));
+
+                renderHand(event.getArm(), poseStack, event.getMultiBufferSource(), event.getPackedLight());
             }
             poseStack.popPose();
             event.setCanceled(true);

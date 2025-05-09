@@ -1,5 +1,7 @@
 package com.jetug.chassis_core.client.render.renderers;
 
+import com.jetug.chassis_core.client.model.LeftHandModel;
+import com.jetug.chassis_core.client.model.RightHandModel;
 import com.jetug.chassis_core.client.render.layers.HandEquipmentLayer;
 import com.jetug.chassis_core.client.render.utils.GeoUtils;
 import com.jetug.chassis_core.client.animators.HandAnimator;
@@ -11,13 +13,12 @@ import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.cache.object.GeoCube;
 import mod.azure.azurelib.model.GeoModel;
 import mod.azure.azurelib.renderer.GeoObjectRenderer;
-import mod.azure.azurelib.util.RenderUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 import java.util.Objects;
 
@@ -28,13 +29,25 @@ import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPla
 
 public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
     public static final String RIGHT_HAND_BONE = "right_arm_pov";
+    public static final String LEFT_HAND_BONE = "left_arm_pov";
+    public static final RightHandModel RIGHT_HAND_MODEL = new RightHandModel();
+    public static final LeftHandModel LEFT_HAND_MODEL = new LeftHandModel();
+    public static final String RIGHT_FOREARM_ARMOR = "right_forearm_armor";
+    public static final String LEFT_FOREARM_ARMOR = "left_forearm_armor";
+    private HumanoidArm arm;
 
-    public CustomHandRenderer(GeoModel<HandAnimator> model) {
-        super(model);
+    public CustomHandRenderer() {
+        super(new RightHandModel());
         addRenderLayer(new HandEquipmentLayer<>(this));
     }
 
-    public void render(PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int packedLight) {
+    @Override
+    public GeoModel<HandAnimator> getGeoModel() {
+        return arm == HumanoidArm.RIGHT ? RIGHT_HAND_MODEL : LEFT_HAND_MODEL;
+    }
+
+    public void render(HumanoidArm arm, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int packedLight) {
+        this.arm = arm;
         super.render(poseStack, getLocalPlayerChassis().getHandEntity(), bufferSource, null, null, packedLight);
     }
 
@@ -44,17 +57,17 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
                                   VertexConsumer buffer, boolean isReRender, float partialTick,
                                   int packedLight, int packedOverlay,
                                   float red, float green, float blue, float alpha) {
-        if(PlayerUtils.isLocalWearingChassis() && Objects.equals(bone.getName(), RIGHT_HAND_BONE)){
+        if(PlayerUtils.isLocalWearingChassis() && (Objects.equals(bone.getName(), RIGHT_HAND_BONE) || Objects.equals(bone.getName(), LEFT_HAND_BONE))){
             var chassis = PlayerUtils.getLocalPlayerChassis();
             if(chassis.isEquipmentVisible(RIGHT_ARM_ARMOR)) {
-                renderHand(poseStack, animatable, buffer, packedLight, packedOverlay, red, green, blue, alpha, chassis);
+                renderArmor(poseStack, animatable, chassis, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             }
         }
         super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer,
                     isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    protected void renderHand(PoseStack poseStack, HandAnimator animatable, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, WearableChassis chassis) {
+    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         var armor = getAsChassisEquipment(chassis.getEquipment(RIGHT_ARM_ARMOR));
         if (armor.getConfig() == null) return;
         var armorModel = armor.getConfig().getModel();
@@ -68,17 +81,76 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
             poseStack.translate(X / 10D / 16D, Y / 10D / 16D,  Z / 10D / 16D);
             poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D,  30 / 10D / 16D);
 
-            for (var cube : armorBone.getCubes()) {
-                poseStack.pushPose();
-                {
-                    var newCube = new GeoCube(cube.quads(), new Vec3(0, 0, 0),
-                            cube.rotation(), cube.size(), cube.inflate(), cube.mirror());
-                    renderCube(poseStack, newCube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-                }
-                poseStack.popPose();
-            }
+            renderBone(armorBone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         }
         poseStack.popPose();
     }
+//
+//    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis,
+//                               VertexConsumer buffer, int packedLight, int packedOverlay,
+//                               float red, float green, float blue, float alpha) {
+//        if(isArmorVisible(chassis)) {
+//            var armorBones = gerArmor(chassis);
+//
+//            poseStack.pushPose();
+//            {
+//                var modelPose = animatable.getSecondaryBoneTransform();
+//                poseStack.mulPoseMatrix(modelPose.last().pose());
+//                translateArmor(modelPose);
+//
+//                for (var bone : armorBones) {
+//                    renderBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+//                }
+//            }
+//            poseStack.popPose();
+//        }
+//
+//    }
 
+    protected String getArmorSlot() {
+        return arm == HumanoidArm.RIGHT ? RIGHT_ARM_ARMOR : LEFT_ARM_ARMOR;
+    }
+
+    protected GeoBone[] gerArmor(WearableChassis chassis) {
+        var armor = getAsChassisEquipment(chassis.getEquipment(getArmorSlot()));
+        var config = armor.getConfig();
+        if (config != null) {
+            var armorModel = armor.getConfig().getModel();
+            if (arm == HumanoidArm.RIGHT) {
+                return new GeoBone[]{GeoUtils.getBone(armorModel, RIGHT_FOREARM_ARMOR)};
+            } else {
+                return new GeoBone[]{GeoUtils.getBone(armorModel, LEFT_FOREARM_ARMOR)};
+            }
+        }
+
+        return new GeoBone[0];
+    }
+
+    protected boolean isArmorVisible(WearableChassis chassis){
+        return chassis.isEquipmentVisible(getArmorSlot());
+    }
+
+    protected void translateArmor(PoseStack poseStack){
+        if(arm == HumanoidArm.RIGHT) {
+            poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D, 30 / 10D / 16D);
+        }
+        else {
+            poseStack.translate(X / 10D / 16D, Y / 10D / 16D, Z / 10D / 16D);
+            poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D, 30 / 10D / 16D);
+        }
+    }
+
+    private void renderBone(GeoBone armorBone, PoseStack poseStack, VertexConsumer buffer,
+                            int packedLight, int packedOverlay,
+                            float red, float green, float blue, float alpha) {
+        for (var cube : armorBone.getCubes()) {
+            poseStack.pushPose();
+            {
+                var newCube = new GeoCube(cube.quads(), new Vec3(0, 0, 0),
+                        cube.rotation(), cube.size(), cube.inflate(), cube.mirror());
+                renderCube(poseStack, newCube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+            poseStack.popPose();
+        }
+    }
 }
