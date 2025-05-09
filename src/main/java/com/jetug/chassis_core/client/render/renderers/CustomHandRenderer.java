@@ -67,45 +67,44 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
                     isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        var armor = getAsChassisEquipment(chassis.getEquipment(RIGHT_ARM_ARMOR));
-        if (armor.getConfig() == null) return;
-        var armorModel = armor.getConfig().getModel();
-        var armorBone = GeoUtils.getBone(armorModel, "right_forearm_armor");
-        if (armorBone == null) return;
-
-        poseStack.pushPose();
-        {
-            var modelPose = animatable.getSecondaryBoneTransform();
-            poseStack.mulPoseMatrix(modelPose.last().pose());
-            poseStack.translate(X / 10D / 16D, Y / 10D / 16D,  Z / 10D / 16D);
-            poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D,  30 / 10D / 16D);
-
-            renderBone(armorBone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        }
-        poseStack.popPose();
-    }
+//    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+//        var armor = getAsChassisEquipment(chassis.getEquipment(RIGHT_ARM_ARMOR));
+//        if (armor.getConfig() == null) return;
+//        var armorModel = armor.getConfig().getModel();
+//        var armorBone = GeoUtils.getBone(armorModel, "right_forearm_armor");
+//        if (armorBone == null) return;
 //
-//    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis,
-//                               VertexConsumer buffer, int packedLight, int packedOverlay,
-//                               float red, float green, float blue, float alpha) {
-//        if(isArmorVisible(chassis)) {
-//            var armorBones = gerArmor(chassis);
+//        poseStack.pushPose();
+//        {
+//            var modelPose = animatable.getSecondaryBoneTransform();
+//            poseStack.mulPoseMatrix(modelPose.last().pose());
+//            poseStack.translate(X / 10D / 16D, Y / 10D / 16D,  Z / 10D / 16D);
+//            poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D,  30 / 10D / 16D);
 //
-//            poseStack.pushPose();
-//            {
-//                var modelPose = animatable.getSecondaryBoneTransform();
-//                poseStack.mulPoseMatrix(modelPose.last().pose());
-//                translateArmor(modelPose);
-//
-//                for (var bone : armorBones) {
-//                    renderBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-//                }
-//            }
-//            poseStack.popPose();
+//            renderBone(armorBone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 //        }
-//
+//        poseStack.popPose();
 //    }
+
+    protected void renderArmor(PoseStack poseStack, HandAnimator animatable, WearableChassis chassis,
+                               VertexConsumer buffer, int packedLight, int packedOverlay,
+                               float red, float green, float blue, float alpha) {
+        if(isArmorVisible(chassis)) {
+            var armorBones = gerArmor(chassis);
+
+            poseStack.pushPose();
+            {
+                var modelPose = animatable.getSecondaryBoneTransform();
+                poseStack.mulPoseMatrix(modelPose.last().pose());
+                translateArmor(poseStack);
+
+                for (var bone : armorBones) {
+                    renderBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                }
+            }
+            poseStack.popPose();
+        }
+    }
 
     protected String getArmorSlot() {
         return arm == HumanoidArm.RIGHT ? RIGHT_ARM_ARMOR : LEFT_ARM_ARMOR;
@@ -135,8 +134,8 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
             poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D, 30 / 10D / 16D);
         }
         else {
-            poseStack.translate(X / 10D / 16D, Y / 10D / 16D, Z / 10D / 16D);
-            poseStack.translate(-82 / 10D / 16D, -220 / 10D / 16D, 30 / 10D / 16D);
+//            poseStack.translate(X / 10D / 16D, Y / 10D / 16D, Z / 10D / 16D);
+            poseStack.translate(78 / 10D / 16D, -215 / 10D / 16D, 31 / 10D / 16D);
         }
     }
 

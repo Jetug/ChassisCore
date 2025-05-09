@@ -34,7 +34,7 @@ public class PlayerEvents {
                     poseStack.translate(18 / 10D / 16D, 91 / 10D / 16D, -155 / 10D / 16D);
                 }
                 else {
-                    poseStack.translate(124 / 10D / 16D, 106 / 10D / 16D,  -155 / 10D / 16D);
+                    poseStack.translate(140 / 10D / 16D, 106 / 10D / 16D,  -155 / 10D / 16D);
                 }
 
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180 * side));
