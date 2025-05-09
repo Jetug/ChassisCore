@@ -28,7 +28,6 @@ public class PlayerEvents {
             poseStack.pushPose();
             {
                 poseStack.mulPose(Axis.XP.rotationDegrees(90));
-                poseStack.translate(X / 10D / 16D, Y / 10D / 16D,  Z / 10D / 16D);
                 poseStack.translate(18 / 10D / 16D, 91 / 10D / 16D,  -154 / 10D / 16D);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180));
 

@@ -1,14 +1,14 @@
 package com.jetug.example.common.entities;
 
-import com.jetug.chassis_core.common.foundation.entity.HandEntity;
+import com.jetug.chassis_core.client.animators.HandAnimator;
 import mod.azure.azurelib.core.animation.AnimationController;
 import mod.azure.azurelib.core.object.PlayState;
 import org.jetbrains.annotations.NotNull;
 
-public class ExampleChassisHand extends HandEntity {
+public class ExampleChassisHand extends HandAnimator {
 
     @Override
-    protected AnimationController.@NotNull AnimationStateHandler<HandEntity> predicate() {
+    protected AnimationController.@NotNull AnimationStateHandler<HandAnimator> predicate() {
         return event -> {
 //            var controller = event.getController();
 //            controller.setAnimationSpeed(1);

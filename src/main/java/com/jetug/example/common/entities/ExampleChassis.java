@@ -2,7 +2,7 @@ package com.jetug.example.common.entities;
 
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.common.foundation.entity.ChassisBase;
-import com.jetug.chassis_core.common.foundation.entity.HandEntity;
+import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.example.common.container.ExampleChassisMenu;
 import com.jetug.example.common.container.ExampleChassisStationMenu;
@@ -81,7 +81,7 @@ public class ExampleChassis extends WearableChassis {
     }
 
     @Override
-    public HandEntity getHandEntity() {
+    public HandAnimator getHandEntity() {
         return HAND;
     }
 

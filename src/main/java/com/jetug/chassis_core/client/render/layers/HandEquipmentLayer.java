@@ -1,7 +1,6 @@
 package com.jetug.chassis_core.client.render.layers;
 
-import com.jetug.chassis_core.common.foundation.entity.HandEntity;
-import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
+import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.util.helpers.PlayerUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -11,7 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 
 @SuppressWarnings("ConstantConditions")
-public class HandEquipmentLayer<T extends HandEntity> extends LayerBase<T> {
+public class HandEquipmentLayer<T extends HandAnimator> extends LayerBase<T> {
     public HandEquipmentLayer(GeoRenderer<T> entityRendererIn) {
         super(entityRendererIn);
     }
