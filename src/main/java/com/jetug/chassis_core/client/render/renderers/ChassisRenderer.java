@@ -1,7 +1,7 @@
 package com.jetug.chassis_core.client.render.renderers;
 
-import com.jetug.chassis_core.client.render.layers.EquipmentLayer;
 import com.jetug.chassis_core.client.render.layers.HeldItemLayer;
+import com.jetug.chassis_core.client.render.utils.GeoUtils;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,7 +9,6 @@ import mod.azure.azurelib.cache.object.BakedGeoModel;
 import mod.azure.azurelib.cache.object.GeoBone;
 import mod.azure.azurelib.model.GeoModel;
 import mod.azure.azurelib.renderer.DynamicGeoEntityRenderer;
-import mod.azure.azurelib.renderer.GeoEntityRenderer;
 import mod.azure.azurelib.util.RenderUtils;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+import static com.jetug.chassis_core.client.render.utils.GeoUtils.getTextureForBone;
 import static com.jetug.chassis_core.common.data.constants.Bones.LEFT_HAND;
 import static com.jetug.chassis_core.common.data.constants.Bones.RIGHT_HAND;
 import static net.minecraft.world.entity.EquipmentSlot.MAINHAND;
@@ -85,8 +85,8 @@ public class ChassisRenderer<T extends WearableChassis> extends DynamicGeoEntity
         RenderUtils.scaleMatrixForBone(poseStack, bone);
 
         if (bone.isTrackingMatrices()) {
-            Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-            Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
+            var poseState = new Matrix4f(poseStack.last().pose());
+            var localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
             bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
             bone.setLocalSpaceMatrix(RenderUtils.translateMatrix(localMatrix, getRenderOffset(this.animatable, 1).toVector3f()));
@@ -96,8 +96,8 @@ public class ChassisRenderer<T extends WearableChassis> extends DynamicGeoEntity
         RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
 
         this.textureOverride = getTextureOverrideForBone(bone, this.animatable, partialTick);
-        ResourceLocation texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;
-        RenderType renderTypeOverride = getRenderTypeOverrideForBone(bone, this.animatable, texture, bufferSource, partialTick);
+        var texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;
+        var renderTypeOverride = getRenderTypeOverrideForBone(bone, this.animatable, texture, bufferSource, partialTick);
 
         if (texture != null && renderTypeOverride == null)
             renderTypeOverride = getRenderType(this.animatable, texture, bufferSource, partialTick);
@@ -143,11 +143,6 @@ public class ChassisRenderer<T extends WearableChassis> extends DynamicGeoEntity
                                  boolean isReRender, float partialTick, int packedLight, int packedOverlay,
                                  float red, float green, float blue, float alpha) {
         if (!bone.isHidingChildren()) {
-            var tt = animatable.textureForBone;
-            var ss = animatable.attachmentForBone;
-            var a = ss;
-            var s = tt;
-
             var bonesToRender = new ArrayList<>(bone.getChildBones());
             var equipmentBones = animatable.getAttachmentForBone(bone.getName());
             bonesToRender.addAll(equipmentBones);
@@ -159,19 +154,9 @@ public class ChassisRenderer<T extends WearableChassis> extends DynamicGeoEntity
         }
     }
 
-//    @Override
+    @Override
     protected @Nullable ResourceLocation getTextureOverrideForBone(GeoBone bone, T animatable, float partialTick) {
-        var texture = animatable.getTextureForBone(bone.getName());
-
-        if(texture == null){
-            var parent =  bone.getParent();
-            while (parent != null && texture == null){
-                texture = animatable.getTextureForBone(parent.getName());
-                parent =  parent.getParent();
-            }
-        }
-
-        return texture;
+        return GeoUtils.getTextureForBone(bone, animatable);
     }
 
     @Override

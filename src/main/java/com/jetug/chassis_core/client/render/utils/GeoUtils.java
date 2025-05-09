@@ -76,4 +76,18 @@ public class GeoUtils {
         bone.setPosY((float) pos.y);
         bone.setPosZ((float) pos.z);
     }
+
+    public static @Nullable ResourceLocation getTextureForBone(GeoBone bone, WearableChassis animatable) {
+        var texture = animatable.getTextureForBone(bone.getName());
+
+        if(texture == null){
+            var parent =  bone.getParent();
+            while (parent != null && texture == null){
+                texture = animatable.getTextureForBone(parent.getName());
+                parent =  parent.getParent();
+            }
+        }
+
+        return texture;
+    }
 }

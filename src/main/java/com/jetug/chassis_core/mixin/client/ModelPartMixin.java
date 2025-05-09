@@ -25,10 +25,12 @@ public abstract class ModelPartMixin {
             {
                 if (playerModel.rightArm.equals(this)) {
                     poseStack.translate(-12 / 10D / 16D, -63 / 10D / 16D, -105 / 10D / 16D);
+                    poseStack.translate(14 / 10D / 16D, 6 / 10D / 16D, 0 / 10D / 16D);
                     renderHand(HumanoidArm.RIGHT, poseStack, null, packedLight);
                     ci.cancel();
                 } else if (playerModel.leftArm.equals(this)) {
                     poseStack.translate(-12 / 10D / 16D, -63 / 10D / 16D, -105 / 10D / 16D);
+                    poseStack.translate(180 / 10D / 16D, 0 / 10D / 16D, 0 / 10D / 16D);
                     renderHand(HumanoidArm.LEFT, poseStack, null, packedLight);
                     ci.cancel();
                 }

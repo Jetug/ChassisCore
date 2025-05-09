@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.jetug.chassis_core.client.events.InputEvents.*;
+import static com.jetug.chassis_core.client.render.utils.GeoUtils.getTextureForBone;
 import static com.jetug.chassis_core.common.data.constants.ChassisPart.*;
 import static com.jetug.chassis_core.common.foundation.entity.ChassisBase.*;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPlayerChassis;
@@ -34,7 +34,7 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
     public static final LeftHandModel LEFT_HAND_MODEL = new LeftHandModel();
     public static final String RIGHT_FOREARM_ARMOR = "right_forearm_armor";
     public static final String LEFT_FOREARM_ARMOR = "left_forearm_armor";
-    private HumanoidArm arm;
+    protected HumanoidArm arm;
 
     public CustomHandRenderer() {
         super(new RightHandModel());
@@ -142,6 +142,9 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
     private void renderBone(GeoBone armorBone, PoseStack poseStack, VertexConsumer buffer,
                             int packedLight, int packedOverlay,
                             float red, float green, float blue, float alpha) {
+        var chassis = PlayerUtils.getLocalPlayerChassis();
+        var texture = GeoUtils.getTextureForBone(armorBone, chassis);
+
         for (var cube : armorBone.getCubes()) {
             poseStack.pushPose();
             {
