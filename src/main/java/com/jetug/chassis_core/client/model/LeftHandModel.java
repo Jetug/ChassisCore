@@ -31,21 +31,4 @@ public class LeftHandModel extends GeoModel<HandAnimator> {
     public ResourceLocation getAnimationResource(HandAnimator geoAnimatable) {
         return getChassisResource("animations/hand/", "_left_hand.animation.json");
     }
-
-    @Override
-    public void setCustomAnimations(HandAnimator animatable, long instanceId, AnimationState<HandAnimator> animationState) {
-        super.setCustomAnimations(animatable, instanceId, animationState);
-
-        var chassis = PlayerUtils.getLocalPlayerChassis();
-        if(chassis.isEquipmentVisible(LEFT_ARM_ARMOR)) {
-            var armor = getAsChassisEquipment(chassis.getEquipment(RIGHT_ARM_ARMOR));
-            if (armor.getConfig() == null) return;
-            var chassisHand = getAnimationProcessor().getBone(LEFT_HAND_BONE);
-            if (chassisHand != null) {
-                var poseStack = new PoseStack();
-                RenderUtils.prepMatrixForBone(poseStack, chassisHand);
-                animatable.setSecondaryBoneTransform(poseStack);
-            }
-        }
-    }
 }

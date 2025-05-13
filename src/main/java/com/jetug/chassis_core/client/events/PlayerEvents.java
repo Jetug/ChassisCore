@@ -39,7 +39,7 @@ public class PlayerEvents {
 
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180 * side));
 
-                renderHand(event.getArm(), poseStack, event.getMultiBufferSource(), event.getPackedLight());
+                renderChassisHand(event.getArm(), poseStack, event.getMultiBufferSource(), event.getPackedLight());
             }
             poseStack.popPose();
             event.setCanceled(true);

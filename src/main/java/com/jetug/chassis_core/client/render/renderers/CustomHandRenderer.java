@@ -2,7 +2,6 @@ package com.jetug.chassis_core.client.render.renderers;
 
 import com.jetug.chassis_core.client.model.LeftHandModel;
 import com.jetug.chassis_core.client.model.RightHandModel;
-import com.jetug.chassis_core.client.render.layers.HandEquipmentLayer;
 import com.jetug.chassis_core.client.render.utils.GeoUtils;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
@@ -74,8 +73,8 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
 
             poseStack.pushPose();
             {
-                var modelPose = animatable.getSecondaryBoneTransform();
-                poseStack.mulPoseMatrix(modelPose.last().pose());
+//                var modelPose = animatable.getSecondaryBoneTransform();
+//                poseStack.mulPoseMatrix(modelPose.last().pose());
                 translateArmor(poseStack);
 
                 for (var bone : armorBones) {

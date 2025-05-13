@@ -1,6 +1,5 @@
 package com.jetug.chassis_core.client.animators;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HandAnimator implements GeoEntity {
     private final AnimatableInstanceCache cache = AzureLibUtil.createInstanceCache(this);
-    private PoseStack secondaryBoneTransform = new PoseStack();
     public LocalPlayer player;
 
     @Override
@@ -28,13 +26,5 @@ public class HandAnimator implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
-    }
-
-    public void setSecondaryBoneTransform(PoseStack poseStack) {
-        this.secondaryBoneTransform = poseStack;
-    }
-
-    public PoseStack getSecondaryBoneTransform() {
-        return this.secondaryBoneTransform;
     }
 }
