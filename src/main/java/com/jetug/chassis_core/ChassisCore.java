@@ -1,6 +1,7 @@
 package com.jetug.chassis_core;
 
 import com.jetug.chassis_core.client.KeyBindings;
+import com.jetug.chassis_core.client.events.SetupEvents;
 import com.jetug.chassis_core.common.foundation.registery.ItemRegistry;
 import com.jetug.chassis_core.common.network.PacketHandler;
 import com.jetug.example.common.registery.ChassisArmorItems;
@@ -32,7 +33,9 @@ public class ChassisCore {
         register();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MOD_EVENT_BUS.addListener(KeyBindings::register));
-
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            SetupEvents.registerHandlers();
+        }
         EVENT_BUS.register(this);
         MOD_EVENT_BUS.addListener(this::onCommonSetup);
     }
