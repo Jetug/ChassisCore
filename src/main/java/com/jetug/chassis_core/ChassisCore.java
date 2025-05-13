@@ -33,9 +33,6 @@ public class ChassisCore {
         register();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MOD_EVENT_BUS.addListener(KeyBindings::register));
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            SetupEvents.registerHandlers();
-        }
         EVENT_BUS.register(this);
         MOD_EVENT_BUS.addListener(this::onCommonSetup);
     }
