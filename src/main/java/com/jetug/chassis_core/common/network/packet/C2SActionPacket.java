@@ -9,28 +9,28 @@ import net.minecraft.network.FriendlyByteBuf;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.isWearingChassis;
 
 @SuppressWarnings("ConstantConditions")
-public class S2CActionPacket extends PlayMessage<S2CActionPacket> {
+public class C2SActionPacket extends PlayMessage<C2SActionPacket> {
     ActionType action = null;
 
-    public S2CActionPacket(ActionType action) {
+    public C2SActionPacket(ActionType action) {
         this.action = action;
     }
 
-    public S2CActionPacket() {}
+    public C2SActionPacket() {}
 
     @Override
-    public void encode(S2CActionPacket actionPacket, FriendlyByteBuf buffer) {
+    public void encode(C2SActionPacket actionPacket, FriendlyByteBuf buffer) {
         buffer.writeByte(actionPacket.action.getId());
     }
 
     @Override
-    public S2CActionPacket decode(FriendlyByteBuf buffer) {
+    public C2SActionPacket decode(FriendlyByteBuf buffer) {
         var action = ActionType.getById(buffer.readByte());
-        return new S2CActionPacket(action);
+        return new C2SActionPacket(action);
     }
 
     @Override
-    public void handle(S2CActionPacket message, MessageContext supplier) {
+    public void handle(C2SActionPacket message, MessageContext supplier) {
         supplier.execute((() ->
         {
             var player = supplier.getPlayer();

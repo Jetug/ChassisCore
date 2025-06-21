@@ -1,6 +1,7 @@
 package com.jetug.chassis_core.common.network;
 
 import com.jetug.chassis_core.ChassisCore;
+import com.jetug.chassis_core.common.network.managers.NetworkChassisManager;
 import com.jetug.chassis_core.common.network.packet.*;
 import com.mrcrayfish.framework.api.FrameworkAPI;
 import com.mrcrayfish.framework.api.network.FrameworkNetwork;
@@ -16,9 +17,13 @@ public class PacketHandler {
 
     public static void register() {
         PLAY_CHANNEL = FrameworkAPI.createNetworkBuilder(new ResourceLocation(ChassisCore.MOD_ID, "play"), 1)
-                .registerPlayMessage(S2CActionPacket.class, MessageDirection.PLAY_SERVER_BOUND)
+                .registerPlayMessage(C2SActionPacket.class, MessageDirection.PLAY_SERVER_BOUND)
                 .registerPlayMessage(C2SGenericPacket.class, MessageDirection.PLAY_SERVER_BOUND)
+
                 .registerPlayMessage(S2CInventoryPacket.class, MessageDirection.PLAY_CLIENT_BOUND)
+                .registerPlayMessage(S2CMessageUpdateChassisConfig.class, MessageDirection.PLAY_CLIENT_BOUND)
                 .build();
+
+        FrameworkAPI.registerLoginData(ResourceLocation.tryBuild(ChassisCore.MOD_ID, "network_chassis_manager"), NetworkChassisManager.LoginData::new);
     }
 }

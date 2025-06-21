@@ -7,7 +7,7 @@ import com.jetug.chassis_core.common.network.packet.*;
 @SuppressWarnings("rawtypes")
 public class PacketSender {
     public static void doServerAction(ActionType action) {
-        PacketHandler.getPlayChannel().sendToServer(new S2CActionPacket(action));
+        PacketHandler.getPlayChannel().sendToServer(new C2SActionPacket(action));
     }
 
     public static void doServerAction(Action action, int entityId) {

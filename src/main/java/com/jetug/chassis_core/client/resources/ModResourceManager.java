@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.jetug.chassis_core.client.render.utils.ResourceHelper.getResourceName;
-import static com.jetug.chassis_core.common.config.JsonDeserializers.GSON_INSTANCE;
+import static com.jetug.chassis_core.modules.config.utils.JsonDeserializers.GSON_INSTANCE;
 
 public class ModResourceManager {
     private static final String CONFIG_DIR = "config/model/";

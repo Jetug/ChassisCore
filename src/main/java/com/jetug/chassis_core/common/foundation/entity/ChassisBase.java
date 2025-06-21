@@ -1,10 +1,13 @@
 package com.jetug.chassis_core.common.foundation.entity;
 
 import com.jetug.chassis_core.client.render.utils.*;
+import com.jetug.chassis_core.common.config.ChassisConfig;
 import com.jetug.chassis_core.common.data.json.*;
 import com.jetug.chassis_core.common.events.*;
 import com.jetug.chassis_core.common.foundation.item.*;
 import com.jetug.chassis_core.common.network.PacketHandler;
+import com.jetug.chassis_core.common.network.managers.ConfigSupplier;
+import com.jetug.chassis_core.common.network.managers.Configs;
 import com.jetug.chassis_core.common.network.packet.*;
 import com.jetug.chassis_core.common.util.helpers.timer.*;
 import mod.azure.azurelib.cache.object.*;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -90,22 +94,22 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
 
     protected HashMap<ChassisPart, Integer> partIdMap = PART_IDS;
 
-
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
     private int tickTimer5 = 5;
 
     public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
-        super(pEntityType, pLevel);
+        this(pEntityType, pLevel);
         this.partIdMap = partIdMap;
         this.inventorySize = partIdMap.size();
-        init();
     }
 
     public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        init();
+        noCulling = true;
+        initInventory();
+        updateParams();
     }
 
     public static ChassisEquipment getAsChassisEquipment(ItemStack itemStack) {
@@ -121,13 +125,13 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return result;
     }
 
-    public void init() {
-        noCulling = true;
-        initInventory();
-        updateParams();
-    }
+    public <S extends INBTSerializable<CompoundTag>> void setConfig(ConfigSupplier<S> sConfigSupplier) {}
 
     //GETTERS
+    public ChassisConfig getConfig(){
+        return Configs.CHASSIS_CONFIGS.get(this.getType()).getConfig();
+    }
+
     public float getTotalDefense() {
         return totalDefense;
     }
