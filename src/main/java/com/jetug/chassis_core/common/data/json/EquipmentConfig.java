@@ -28,10 +28,6 @@ public class EquipmentConfig extends ModelConfigBase {
     }
 
     public void onFinishLoading(){
-//        croppedTextures = texture;
-//        initTextureResource();
-//        var t = new Thread(this::initTextureResource);
-//        t.start();
     }
 
     public Collection<String> getAllVariants() {
@@ -45,20 +41,4 @@ public class EquipmentConfig extends ModelConfigBase {
     public ResourceLocation getTexture(String tag) {
         return texture.get(tag);
     }
-//
-//    private void initTextureResource() {
-//        var result = new HashMap<String, ResourceLocation>();
-//        texture.forEach((key, value) -> result.put(key, handleTexture(key, value)));
-//        croppedTextures = result;
-//    }
-//
-//    private ResourceLocation handleTexture(String variant, ResourceLocation location) {
-//        if (uv == null || uv.length < 4) return location;
-//
-//        var croppedTexture = cropTexture(location, uv[0], uv[1], uv[2], uv[3]);
-//        if (croppedTexture != null) {
-//            location = createResource(name + "_" + variant, croppedTexture);
-//        }
-//        return location;
-//    }
 }

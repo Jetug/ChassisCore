@@ -87,7 +87,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
             LEFT_LEG_ARMOR,
             RIGHT_LEG_ARMOR,
     };
-    private ChassisConfig config = null;
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
@@ -243,13 +242,6 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
             containerReallyChanged(container);
             previousContainer = copyContainer(container);
         }
-    }
-
-    @Nullable
-    public ChassisConfig getConfig() {
-        if (config == null)
-            config = ClientConfig.modResourceManager.getFrameConfig(getModelId());
-        return config;
     }
 
     public String getModelId() {
