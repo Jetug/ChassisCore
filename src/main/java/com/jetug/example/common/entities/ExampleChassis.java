@@ -1,6 +1,7 @@
 package com.jetug.example.common.entities;
 
 import com.jetug.chassis_core.ChassisCore;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.entity.ChassisBase;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
@@ -34,10 +35,10 @@ public class ExampleChassis extends WearableChassis {
             = new ResourceLocation(ChassisCore.MOD_ID, "textures/items/power_armor_frame.png");
     public static final ExampleChassisHand HAND = new ExampleChassisHand();
 
-    public static HashMap<String, Integer> POWER_ARMOR_PART_IDS;
+    public static HashMap<ChassisPart, Integer> POWER_ARMOR_PART_IDS;
 
     static {
-        POWER_ARMOR_PART_IDS = (HashMap<String, Integer>) PART_IDS.clone();
+        POWER_ARMOR_PART_IDS = (HashMap<ChassisPart, Integer>) PART_IDS.clone();
     }
 
     public RawAnimation currentAnimation = null;
@@ -46,7 +47,7 @@ public class ExampleChassis extends WearableChassis {
         super(type, worldIn, POWER_ARMOR_PART_IDS);
     }
 
-    public static int getId(String chassisPart) {
+    public static int getId(ChassisPart chassisPart) {
         return POWER_ARMOR_PART_IDS.get(chassisPart);
     }
 
@@ -55,7 +56,7 @@ public class ExampleChassis extends WearableChassis {
 //        return List.of(armorParts);
 //    }
 
-    private static void addSlot(String slot) {
+    private static void addSlot(ChassisPart slot) {
         POWER_ARMOR_PART_IDS.put(slot, PART_IDS.size());
     }
 

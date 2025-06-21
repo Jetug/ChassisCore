@@ -6,6 +6,7 @@ import com.jetug.chassis_core.Global;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.client.model.RightHandModel;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
 import com.jetug.chassis_core.common.util.helpers.Speedometer;
 import mod.azure.azurelib.animatable.GeoEntity;
@@ -220,7 +221,7 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
     }
 
     @Nullable
-    public ChassisEquipment getEquipmentItem(String part) {
+    public ChassisEquipment getEquipmentItem(ChassisPart part) {
         var stack = getEquipment(part);
         if (!stack.isEmpty())
             return (ChassisEquipment) stack.getItem();
@@ -276,7 +277,7 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
         super(type, worldIn);
     }
 
-    public WearableChassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<String, Integer> partIdMap) {
+    public WearableChassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
         super(pEntityType, pLevel, partIdMap);
     }
 

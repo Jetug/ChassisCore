@@ -4,6 +4,7 @@ import com.jetug.chassis_core.client.model.LeftHandModel;
 import com.jetug.chassis_core.client.model.RightHandModel;
 import com.jetug.chassis_core.client.render.utils.GeoUtils;
 import com.jetug.chassis_core.client.animators.HandAnimator;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.chassis_core.common.util.helpers.PlayerUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.jetug.chassis_core.common.data.constants.ChassisPart.*;
 import static com.jetug.chassis_core.common.foundation.entity.ChassisBase.*;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPlayerChassis;
 
@@ -85,8 +85,8 @@ public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {
         }
     }
 
-    protected String getArmorSlot() {
-        return arm == HumanoidArm.RIGHT ? RIGHT_ARM_ARMOR : LEFT_ARM_ARMOR;
+    protected ChassisPart getArmorSlot() {
+        return arm == HumanoidArm.RIGHT ? ChassisPart.RIGHT_ARM_ARMOR : ChassisPart.LEFT_ARM_ARMOR;
     }
 
     protected GeoBone[] gerArmor(WearableChassis chassis) {

@@ -1,6 +1,7 @@
 package com.jetug.chassis_core.common.foundation.item;
 
 import com.jetug.chassis_core.client.render.utils.ResourceHelper;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.data.json.EquipmentConfig;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
@@ -22,13 +23,13 @@ import static com.jetug.chassis_core.common.foundation.item.StackUtils.getVarian
 import static mod.azure.azurelib.util.AzureLibUtil.createInstanceCache;
 
 public class ChassisEquipment extends Item implements GeoItem {
-    public final String part;
+    public final ChassisPart part;
     private final AnimatableInstanceCache cache = createInstanceCache(this);
     private final Lazy<String> name = Lazy.of(() -> ResourceHelper.getResourceName(ForgeRegistries.ITEMS.getKey(this)));
     private final Lazy<EquipmentConfig> config = Lazy.of(() -> modResourceManager.getEquipmentConfig(getName()));
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-    public ChassisEquipment(Properties pProperties, String part) {
+    public ChassisEquipment(Properties pProperties, ChassisPart part) {
         super(pProperties);
         this.part = part;
     }

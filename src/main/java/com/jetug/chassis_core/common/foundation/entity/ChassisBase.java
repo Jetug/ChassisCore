@@ -1,6 +1,5 @@
 package com.jetug.chassis_core.common.foundation.entity;
 
-import com.jetug.chassis_core.client.*;
 import com.jetug.chassis_core.client.render.utils.*;
 import com.jetug.chassis_core.common.data.json.*;
 import com.jetug.chassis_core.common.events.*;
@@ -33,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.jetug.chassis_core.common.data.constants.ChassisPart.*;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import static com.jetug.chassis_core.common.data.constants.NBT.ITEMS_TAG;
 import static com.jetug.chassis_core.common.util.extensions.Collection.arrayListOf;
 import static com.jetug.chassis_core.common.util.helpers.ContainerUtils.copyContainer;
@@ -45,26 +44,36 @@ import static java.util.Collections.addAll;
 
 public class ChassisBase extends EmptyLivingEntity implements ContainerListener {
     public static final int INVENTORY_SIZE = 6;
-    public static HashMap<String, Integer> PART_IDS = new HashMap<>();
+    public static HashMap<ChassisPart, Integer> PART_IDS = new HashMap<>();
 
     static {
         var i = 0;
-        PART_IDS.put(HELMET, i++);
-        PART_IDS.put(BODY_ARMOR, i++);
-        PART_IDS.put(LEFT_ARM_ARMOR, i++);
-        PART_IDS.put(RIGHT_ARM_ARMOR, i++);
-        PART_IDS.put(LEFT_LEG_ARMOR, i++);
-        PART_IDS.put(RIGHT_LEG_ARMOR, i++);
+        PART_IDS.put(ChassisPart.HELMET, i++);
+        PART_IDS.put(ChassisPart.BODY_ARMOR, i++);
+        PART_IDS.put(ChassisPart.LEFT_ARM_ARMOR, i++);
+        PART_IDS.put(ChassisPart.RIGHT_ARM_ARMOR, i++);
+        PART_IDS.put(ChassisPart.LEFT_LEG_ARMOR, i++);
+        PART_IDS.put(ChassisPart.RIGHT_LEG_ARMOR, i++);
     }
 
-    public final String[] armor = new String[]{
-            HELMET,
-            BODY_ARMOR,
-            LEFT_ARM_ARMOR,
-            RIGHT_ARM_ARMOR,
-            LEFT_LEG_ARMOR,
-            RIGHT_LEG_ARMOR,
+    public final ChassisPart[] armor = new ChassisPart[]{
+            ChassisPart.HELMET,
+            ChassisPart.BODY_ARMOR,
+            ChassisPart.LEFT_ARM_ARMOR,
+            ChassisPart.RIGHT_ARM_ARMOR,
+            ChassisPart.LEFT_LEG_ARMOR,
+            ChassisPart.RIGHT_LEG_ARMOR,
     };
+
+    protected ChassisPart[] armorParts = new ChassisPart[]{
+            ChassisPart.HELMET,
+            ChassisPart.BODY_ARMOR,
+            ChassisPart.LEFT_ARM_ARMOR,
+            ChassisPart.RIGHT_ARM_ARMOR,
+            ChassisPart.LEFT_LEG_ARMOR,
+            ChassisPart.RIGHT_LEG_ARMOR,
+    };
+
     protected final TickTimer timer = new TickTimer();
     protected final boolean isClientSide = level().isClientSide;
     protected final boolean isServerSide = !level().isClientSide;
@@ -78,21 +87,16 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     protected float totalDefense;
     protected float totalToughness;
     protected int inventorySize = 6;
-    protected HashMap<String, Integer> partIdMap = PART_IDS;
-    protected String[] armorParts = new String[]{
-            HELMET,
-            BODY_ARMOR,
-            LEFT_ARM_ARMOR,
-            RIGHT_ARM_ARMOR,
-            LEFT_LEG_ARMOR,
-            RIGHT_LEG_ARMOR,
-    };
+
+    protected HashMap<ChassisPart, Integer> partIdMap = PART_IDS;
+
+
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
     private int tickTimer5 = 5;
 
-    public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<String, Integer> partIdMap) {
+    public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
         super(pEntityType, pLevel);
         this.partIdMap = partIdMap;
         this.inventorySize = partIdMap.size();
@@ -143,21 +147,21 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     public void damageArmor(DamageSource damageSource, float damage) {
         if (isServerSide) {
             if (!damageSource.is(DamageTypes.FALL)) {
-                damageArmorItem(HELMET, damageSource, damage);
-                damageArmorItem(BODY_ARMOR, damageSource, damage);
-                damageArmorItem(LEFT_ARM_ARMOR, damageSource, damage);
-                damageArmorItem(RIGHT_ARM_ARMOR, damageSource, damage);
+                damageArmorItem(ChassisPart.HELMET, damageSource, damage);
+                damageArmorItem(ChassisPart.BODY_ARMOR, damageSource, damage);
+                damageArmorItem(ChassisPart.LEFT_ARM_ARMOR, damageSource, damage);
+                damageArmorItem(ChassisPart.RIGHT_ARM_ARMOR, damageSource, damage);
             }
-            damageArmorItem(LEFT_LEG_ARMOR, damageSource, damage);
-            damageArmorItem(RIGHT_LEG_ARMOR, damageSource, damage);
+            damageArmorItem(ChassisPart.LEFT_LEG_ARMOR, damageSource, damage);
+            damageArmorItem(ChassisPart.RIGHT_LEG_ARMOR, damageSource, damage);
         }
     }
 
-    public void damageArmorItem(String chassisPart, DamageSource damageSource, float damage) {
+    public void damageArmorItem(ChassisPart chassisPart, DamageSource damageSource, float damage) {
         var itemStack = getEquipment(chassisPart);
 
-        if (itemStack.getItem() instanceof ChassisArmor armorItem) {
-            armorItem.damageArmor(itemStack, (int) damage);
+        if (itemStack.getItem() instanceof ChassisArmor) {
+            ItemStackUtils.damageItem(itemStack, (int)damage);
             setEquipment(chassisPart, itemStack);
         }
     }
@@ -188,7 +192,7 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return textureForBone.get(bone);
     }
 
-    public Integer getPartId(String chassisPart) {
+    public Integer getPartId(ChassisPart chassisPart) {
         var val = partIdMap.get(chassisPart);
         return val != null ? val : 0;
     }
@@ -255,29 +259,29 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         MinecraftForge.EVENT_BUS.post(new ContainerChangedEvent(this));
     }
 
-    public boolean isEquipmentVisible(String chassisPart) {
+    public boolean isEquipmentVisible(ChassisPart chassisPart) {
         if (isArmorItem(chassisPart))
             return hasArmor(chassisPart);
         else return !getEquipment(chassisPart).isEmpty();
     }
 
-    public boolean isArmorItem(String chassisPart) {
+    public boolean isArmorItem(ChassisPart chassisPart) {
         return stream(armorParts).toList().contains(chassisPart);
     }
 
-    public boolean hasArmor(String chassisPart) {
+    public boolean hasArmor(ChassisPart chassisPart) {
         return getArmorDurability(chassisPart) != 0;
     }
 
-    public Collection<String> getEquipment() {
+    public Collection<ChassisPart> getEquipment() {
         return partIdMap.keySet();
     }
 
-    public Collection<String> getPovEquipment() {
-        return Collections.singleton(RIGHT_ARM_ARMOR);
+    public Collection<ChassisPart> getPovEquipment() {
+        return Collections.singleton(ChassisPart.RIGHT_ARM_ARMOR);
     }
 
-    public boolean hasEquipment(String part) {
+    public boolean hasEquipment(ChassisPart part) {
         return !getEquipment(part).isEmpty();
     }
 
@@ -291,15 +295,15 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return returnCollection(getVisibleEquipment(), (equipment) -> ((ChassisEquipment) equipment.getItem()).getConfig());
     }
 
-    public ItemStack getEquipment(String chassisPart) {
+    public ItemStack getEquipment(ChassisPart chassisPart) {
         return inventory.getItem(getPartId(chassisPart));
     }
 
-    public void setEquipment(String chassisPart, ItemStack itemStack) {
+    public void setEquipment(ChassisPart chassisPart, ItemStack itemStack) {
         inventory.setItem(getPartId(chassisPart), itemStack);
     }
 
-    public int getArmorDurability(String chassisPart) {
+    public int getArmorDurability(ChassisPart chassisPart) {
         var itemStack = getEquipment(chassisPart);
         if (itemStack.isEmpty()) return 0;
         return itemStack.getMaxDamage() - itemStack.getDamageValue();

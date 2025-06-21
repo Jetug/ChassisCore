@@ -1,5 +1,6 @@
 package com.jetug.chassis_core.common.foundation.container.menu;
 
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.container.slot.EquipmentSlot;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.chassis_core.common.util.Pos2I;
@@ -28,9 +29,9 @@ public abstract class EntityMenu extends MenuBase {
         return entity;
     }
 
-    protected abstract int getId(String chassisPart);
+    protected abstract int getId(ChassisPart chassisPart);
 
-    protected void createSlot(String chassisPart, Pos2I pos) {
+    protected void createSlot(ChassisPart chassisPart, Pos2I pos) {
         try {
             //if(entity == null) return;
             this.addSlot(new EquipmentSlot(chassisPart, container, getId(chassisPart), pos.x, pos.y));

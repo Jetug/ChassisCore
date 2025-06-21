@@ -1,31 +1,17 @@
 package com.jetug.chassis_core.common.foundation.item;
 
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.ChassisArmorMaterial;
-import net.minecraft.world.damagesource.CombatRules;
-import net.minecraft.world.item.ItemStack;
 
-public class ChassisArmor extends DamageableItem {
+public class ChassisArmor extends ChassisEquipment {
     public final ChassisArmorMaterial material;
 
-    public ChassisArmor(Properties pProperties, ChassisArmorMaterial material, String part) {
+    public ChassisArmor(Properties pProperties, ChassisArmorMaterial material, ChassisPart part) {
         super(pProperties.durability(material.getDurabilityForSlot(part)), part);
         this.material = material;
     }
 
-    public static boolean hasArmor(ItemStack itemStack) {
-        return getItemDamage(itemStack) < itemStack.getMaxDamage();
-    }
-
     public ChassisArmorMaterial getMaterial() {
         return material;
-    }
-
-    public float getDamageAfterAbsorb(float damage) {
-        return CombatRules.getDamageAfterAbsorb(damage, material.getDefenseForSlot(part), material.getToughness());
-    }
-
-    public void damageArmor(ItemStack itemStack, int dmg) {
-        var resultDamage = getItemDamage(itemStack) + dmg;
-        setItemDamage(itemStack, Math.min(resultDamage, itemStack.getMaxDamage()));
     }
 }

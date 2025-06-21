@@ -1,16 +1,12 @@
 package com.jetug.example.common.registery;
 
 import com.jetug.chassis_core.ChassisCore;
-import com.jetug.chassis_core.common.data.constants.ChassisPart;
-import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
-import com.jetug.chassis_core.common.foundation.item.ChassisArmor;
-import com.jetug.chassis_core.common.foundation.item.ChassisItem;
+import com.jetug.chassis_core.common.data.holders.ChassisPart;
+import com.jetug.chassis_core.common.foundation.item.*;
 import com.jetug.example.common.entities.ExampleChassis;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.*;
 
 import static com.jetug.example.common.registery.ChassisArmorMaterials.EXAMPLE;
 

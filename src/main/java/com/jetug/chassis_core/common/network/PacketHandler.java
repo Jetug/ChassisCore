@@ -21,36 +21,4 @@ public class PacketHandler {
                 .registerPlayMessage(S2CInventoryPacket.class, MessageDirection.PLAY_CLIENT_BOUND)
                 .build();
     }
-
-//    public static void register() {
-//        CHANNEL.registerMessage(disc++, S2CInventoryPacket.class, S2CInventoryPacket::write, S2CInventoryPacket::read, S2CInventoryPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-////        CHANNEL.registerMessage(disc++, C2SInventoryPacket.class, C2SInventoryPacket::write, C2SInventoryPacket::read, C2SInventoryPacket::handle);
-//        CHANNEL.registerMessage(disc++, S2CActionPacket.class, S2CActionPacket::write, S2CActionPacket::read, S2CActionPacket::handle);
-//        CHANNEL.registerMessage(disc++, C2SGenericPacket.class, C2SGenericPacket::write, C2SGenericPacket::read, C2SGenericPacket::handle);
-//    }
-//
-//    public static void sendToServer(Object msg) {
-//        CHANNEL.sendToServer(msg);
-//    }
-//
-//    public static void sendTo(Object msg, ServerPlayer player) {
-//        CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-//    }
-//
-//    public static void sendToAllPlayers(Object message) {
-//        CHANNEL.send(PacketDistributor.ALL.noArg(), message);
-//    }
-//
-//    public static void sendToTrackingEntity(Supplier<Entity> supplier, Object message) {
-//        CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(supplier), message);
-//    }
-
-//    public static void sendToAllPlayers(Object msg) {
-//        var server = ServerLifecycleHooks.getCurrentServer();
-//        if (server == null) return;
-//
-//        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-//            sendTo(msg, player);
-//        }
-//    }
 }
