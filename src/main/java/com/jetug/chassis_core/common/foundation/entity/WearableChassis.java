@@ -201,14 +201,24 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
 //        }
 //    }
 
+    public float getFlyingSpeed() {
+        if (hasPlayerPassenger() && isFlying() && !this.isPassenger()) {
+            var speed = this.getPlayerPassenger().getAbilities().getFlyingSpeed();
+            return this.isSprinting() ? speed * 2.0F : speed;
+        } else {
+            return this.isSprinting() ? 0.025999999F : 0.02F;
+        }
+    }
+
     @Override
     public void travel(Vec3 travelVector) {
         if (!isAlive()) return;
 
         if (getControllingPassenger() instanceof Player player) {
-            if (player.isCreative() && player.getAbilities().flying) {
+            if (isFlying()) {
                 // Полностью отключаем гравитацию
                 this.setNoGravity(true);
+                setRotationMatchingPassenger(player);
 
                 // Параметры ускорения
                 float acceleration = 0.1f;
@@ -230,9 +240,9 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
                 Vec3 newMotion = applyAcceleration(currentMotion, desiredMotion, acceleration);
 
                 // Учитываем скорость полета игрока
-                float speedFactor = player.getAbilities().getFlyingSpeed() * 2.0f;
+                float speedFactor = player.getAbilities().getWalkingSpeed() * 10.0f;
                 if (player.isSprinting()) {
-                    speedFactor *= 2.0f;
+                    speedFactor *= 1.2f;
                 }
                 newMotion = newMotion.scale(speedFactor);
 
@@ -241,7 +251,7 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
                 this.move(MoverType.SELF, this.getDeltaMovement());
 
                 // Применяем замедление (как в оригинальном креативном полете)
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.91));
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.8));
 
                 // Сбрасываем падение
                 this.fallDistance = 0.0f;
@@ -255,6 +265,10 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         else {
             super.travel(travelVector);
         }
+    }
+
+    private boolean isFlying() {
+        return getControllingPassenger() instanceof Player player && player.isCreative() && player.getAbilities().flying;
     }
 
     @Override
