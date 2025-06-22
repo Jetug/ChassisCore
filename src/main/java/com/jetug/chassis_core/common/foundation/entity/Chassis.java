@@ -46,28 +46,28 @@ import static com.jetug.chassis_core.common.util.helpers.InventoryHelper.seriali
 import static java.util.Arrays.stream;
 import static java.util.Collections.addAll;
 
-public class ChassisBase extends EmptyLivingEntity implements ContainerListener {
+public class Chassis extends EmptyLivingEntity implements ContainerListener {
     public static final int INVENTORY_SIZE = 6;
-    public static HashMap<ChassisPart, Integer> PART_IDS = new HashMap<>();
+//    public static HashMap<ChassisPart, Integer> PART_IDS = new HashMap<>();
+//
+//    static {
+//        var i = 0;
+//        PART_IDS.put(ChassisPart.HELMET, i++);
+//        PART_IDS.put(ChassisPart.BODY_ARMOR, i++);
+//        PART_IDS.put(ChassisPart.LEFT_ARM_ARMOR, i++);
+//        PART_IDS.put(ChassisPart.RIGHT_ARM_ARMOR, i++);
+//        PART_IDS.put(ChassisPart.LEFT_LEG_ARMOR, i++);
+//        PART_IDS.put(ChassisPart.RIGHT_LEG_ARMOR, i++);
+//    }
 
-    static {
-        var i = 0;
-        PART_IDS.put(ChassisPart.HELMET, i++);
-        PART_IDS.put(ChassisPart.BODY_ARMOR, i++);
-        PART_IDS.put(ChassisPart.LEFT_ARM_ARMOR, i++);
-        PART_IDS.put(ChassisPart.RIGHT_ARM_ARMOR, i++);
-        PART_IDS.put(ChassisPart.LEFT_LEG_ARMOR, i++);
-        PART_IDS.put(ChassisPart.RIGHT_LEG_ARMOR, i++);
-    }
-
-    public final ChassisPart[] armor = new ChassisPart[]{
-            ChassisPart.HELMET,
-            ChassisPart.BODY_ARMOR,
-            ChassisPart.LEFT_ARM_ARMOR,
-            ChassisPart.RIGHT_ARM_ARMOR,
-            ChassisPart.LEFT_LEG_ARMOR,
-            ChassisPart.RIGHT_LEG_ARMOR,
-    };
+//    public final ChassisPart[] armor = new ChassisPart[]{
+//            ChassisPart.HELMET,
+//            ChassisPart.BODY_ARMOR,
+//            ChassisPart.LEFT_ARM_ARMOR,
+//            ChassisPart.RIGHT_ARM_ARMOR,
+//            ChassisPart.LEFT_LEG_ARMOR,
+//            ChassisPart.RIGHT_LEG_ARMOR,
+//    };
 
     protected ChassisPart[] armorParts = new ChassisPart[]{
             ChassisPart.HELMET,
@@ -77,6 +77,8 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
             ChassisPart.LEFT_LEG_ARMOR,
             ChassisPart.RIGHT_LEG_ARMOR,
     };
+
+    protected HashMap<ChassisPart, Integer> partIdMap = new HashMap<>();
 
     protected final TickTimer timer = new TickTimer();
     protected final boolean isClientSide = level().isClientSide;
@@ -92,24 +94,28 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     protected float totalToughness;
     protected int inventorySize = 6;
 
-    protected HashMap<ChassisPart, Integer> partIdMap = PART_IDS;
 
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
     private int tickTimer5 = 5;
 
-    public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
+    public Chassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
         this(pEntityType, pLevel);
         this.partIdMap = partIdMap;
         this.inventorySize = partIdMap.size();
     }
 
-    public ChassisBase(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
+    public Chassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         noCulling = true;
         initInventory();
         updateParams();
+
+        var i = 0;
+        for (var part : getConfig().getParts()) {
+            partIdMap.put(part, i++);
+        }
     }
 
     public static ChassisEquipment getAsChassisEquipment(ItemStack itemStack) {
@@ -196,9 +202,10 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         return textureForBone.get(bone);
     }
 
+
+    @Nullable
     public Integer getPartId(ChassisPart chassisPart) {
-        var val = partIdMap.get(chassisPart);
-        return val != null ? val : 0;
+        return partIdMap.get(chassisPart);
     }
 
     @Override
@@ -300,7 +307,12 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
     }
 
     public ItemStack getEquipment(ChassisPart chassisPart) {
-        return inventory.getItem(getPartId(chassisPart));
+        var id = getPartId(chassisPart);
+        if(id == null) {
+            id = 0;
+        }
+
+        return inventory.getItem(id);
     }
 
     public void setEquipment(ChassisPart chassisPart, ItemStack itemStack) {
@@ -406,7 +418,7 @@ public class ChassisBase extends EmptyLivingEntity implements ContainerListener 
         this.totalDefense = 0;
         this.totalToughness = 0;
 
-        for (var part : armor) {
+        for (var part : armorParts) {
             if (getEquipment(part).getItem() instanceof ChassisArmor armorItem) {
                 this.totalDefense += armorItem.getMaterial().getDefenseForSlot(part);
                 this.totalToughness += armorItem.getMaterial().getToughness();

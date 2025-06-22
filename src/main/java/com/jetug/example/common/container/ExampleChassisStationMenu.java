@@ -2,6 +2,7 @@ package com.jetug.example.common.container;
 
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.container.menu.EntityMenu;
+import com.jetug.chassis_core.common.foundation.entity.Chassis;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.example.common.entities.ExampleChassis;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +21,7 @@ public class ExampleChassisStationMenu extends EntityMenu {
         this(i, new SimpleContainer(SIZE), playerInventory, null);
     }
 
-    public ExampleChassisStationMenu(int containerId, Container container, Inventory playerInventory, WearableChassis entity) {
+    public ExampleChassisStationMenu(int containerId, Container container, Inventory playerInventory, Chassis entity) {
         super(EXAMPLE_STATION_MENU.get(), containerId, container, playerInventory, entity, SIZE, INVENTORY_POS_Y);
         createSlot(ChassisPart.BODY_FRAME, FRAME_BODY_SLOT_POS);
         createSlot(ChassisPart.LEFT_ARM_FRAME, FRAME_LEFT_ARM_SLOT_POS);
@@ -35,7 +36,7 @@ public class ExampleChassisStationMenu extends EntityMenu {
     }
 
     @Override
-    protected int getId(ChassisPart chassisPart) {
-        return ExampleChassis.getId(chassisPart);
+    protected Integer getId(ChassisPart chassisPart) {
+        return chassis.getPartId(chassisPart);
     }
 }

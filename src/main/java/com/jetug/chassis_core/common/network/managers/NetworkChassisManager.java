@@ -1,11 +1,9 @@
 package com.jetug.chassis_core.common.network.managers;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.common.config.ChassisConfig;
-import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.entity.ChassisBase;
+import com.jetug.chassis_core.common.foundation.entity.Chassis;
 import com.jetug.chassis_core.common.network.PacketHandler;
 import com.jetug.chassis_core.common.network.packet.S2CMessageUpdateChassisConfig;
 import com.jetug.chassis_core.modules.config.utils.ConfigUtils;
@@ -16,7 +14,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -28,16 +25,14 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraftforge.registries.ForgeRegistries.ITEMS;
-
 @Mod.EventBusSubscriber(modid = ChassisCore.MOD_ID)
-public class NetworkChassisManager extends SimplePreparableReloadListener<Map<EntityType<ChassisBase>, ChassisConfig>> {
+public class NetworkChassisManager extends SimplePreparableReloadListener<Map<EntityType<Chassis>, ChassisConfig>> {
     public static final String PATH = "chassis";
 //    private static final List<ChassisBase> clientRegisteredAmmo = new ArrayList<>();
     private static NetworkChassisManager instance;
 
     private Map<ResourceLocation, ChassisConfig> registeredAmmo = new HashMap<>();
-    
+
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         NetworkChassisManager.instance = null;
@@ -58,12 +53,12 @@ public class NetworkChassisManager extends SimplePreparableReloadListener<Map<En
     }
 
     @Override
-    protected Map<EntityType<ChassisBase>, ChassisConfig> prepare(ResourceManager manager, ProfilerFiller profiler) {
+    protected Map<EntityType<Chassis>, ChassisConfig> prepare(ResourceManager manager, ProfilerFiller profiler) {
         return ConfigUtils.getConfigMap(manager, ForgeRegistries.ENTITY_TYPES, (v) -> true, ChassisConfig.class, PATH);
     }
 
     @Override
-    protected void apply(Map<EntityType<ChassisBase>, ChassisConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<EntityType<Chassis>, ChassisConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
         var builder = ImmutableMap.<ResourceLocation, ChassisConfig>builder();
 
         objects.forEach((chassis, ammo) -> {
@@ -119,7 +114,7 @@ public class NetworkChassisManager extends SimplePreparableReloadListener<Map<En
 //                    return false;
 //                }
 
-                Configs.CHASSIS_CONFIGS.put((EntityType<ChassisBase>) item, new ConfigSupplier<>(entry.getValue()));
+                Configs.CHASSIS_CONFIGS.put((EntityType<Chassis>) item, new ConfigSupplier<>(entry.getValue()));
 
 //                ((EntityType<ChassisBase>) item).setConfig(new NetworkManager.Supplier<>(entry.getValue()));
 //                clientRegisteredAmmo.add((EntityType<ChassisBase>) item);

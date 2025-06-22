@@ -1,4 +1,4 @@
-package com.jetug.example.common.screen;
+package com.jetug.example.client.screen;
 
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.client.gui.screen.ChassisScreen;

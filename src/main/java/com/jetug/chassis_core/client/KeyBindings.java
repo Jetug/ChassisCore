@@ -25,8 +25,6 @@ public class KeyBindings {
     public static final KeyMapping KEY_DEBUG_SHOW = new KeyMapping( "key.chassiscore.debug_show", GLFW.GLFW_KEY_KP_MULTIPLY, "key.categories.armor");
 
     public static void register(RegisterKeyMappingsEvent event) {
-//        for (KeyMapping key : getKeys())
-//            event.register(key);
         event.register(LEAVE);
 
         if(ChassisCore.isDebugging()){

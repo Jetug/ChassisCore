@@ -38,6 +38,10 @@ public class ChassisConfig implements INBTSerializable<CompoundTag>{
         return config;
     }
 
+    public Set<ChassisPart> getParts() {
+        return parts;
+    }
+
     public static class Builder {
         private final ChassisConfig config;
 

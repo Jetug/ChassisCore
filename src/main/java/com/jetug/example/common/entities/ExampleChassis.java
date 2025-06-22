@@ -2,7 +2,7 @@ package com.jetug.example.common.entities;
 
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.entity.ChassisBase;
+import com.jetug.chassis_core.common.foundation.entity.Chassis;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.example.common.container.ExampleChassisMenu;
@@ -22,43 +22,41 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 
-import java.util.HashMap;
-
 import static com.jetug.example.common.ArmorChassisAnimation.*;
 import static mod.azure.azurelib.core.animation.Animation.LoopType.LOOP;
 import static mod.azure.azurelib.core.animation.Animation.LoopType.PLAY_ONCE;
 import static mod.azure.azurelib.core.animation.RawAnimation.begin;
 
 public class ExampleChassis extends WearableChassis {
-    public static final int INVENTORY_SIZE = ChassisBase.INVENTORY_SIZE + 6;
+    public static final int INVENTORY_SIZE = Chassis.INVENTORY_SIZE + 6;
     public static final ResourceLocation ICON
             = new ResourceLocation(ChassisCore.MOD_ID, "textures/items/power_armor_frame.png");
     public static final ExampleChassisHand HAND = new ExampleChassisHand();
 
-    public static HashMap<ChassisPart, Integer> POWER_ARMOR_PART_IDS;
-
-    static {
-        POWER_ARMOR_PART_IDS = (HashMap<ChassisPart, Integer>) PART_IDS.clone();
-    }
+//    public static HashMap<ChassisPart, Integer> POWER_ARMOR_PART_IDS;
+//
+//    static {
+//        POWER_ARMOR_PART_IDS = (HashMap<ChassisPart, Integer>) PART_IDS.clone();
+//    }
 
     public RawAnimation currentAnimation = null;
 
     public ExampleChassis(EntityType<? extends WearableChassis> type, Level worldIn) {
-        super(type, worldIn, POWER_ARMOR_PART_IDS);
+        super(type, worldIn);
     }
 
-    public static int getId(ChassisPart chassisPart) {
-        return POWER_ARMOR_PART_IDS.get(chassisPart);
-    }
+//    public static int getId(ChassisPart chassisPart) {
+//        return POWER_ARMOR_PART_IDS.get(chassisPart);
+//    }
 
 //    @Override
 //    public Collection<String> getEquipment() {
 //        return List.of(armorParts);
 //    }
 
-    private static void addSlot(ChassisPart slot) {
-        POWER_ARMOR_PART_IDS.put(slot, PART_IDS.size());
-    }
+//    private static void addSlot(ChassisPart slot) {
+//        POWER_ARMOR_PART_IDS.put(slot, PART_IDS.size());
+//    }
 
     @Override
     public boolean hurt(DamageSource damageSource, float damage) {
@@ -86,20 +84,20 @@ public class ExampleChassis extends WearableChassis {
         return HAND;
     }
 
-    @Override
-    public MenuProvider getMenuProvider() {
-        return new MenuProvider() {
-            @Override
-            public AbstractContainerMenu createMenu(int id, Inventory menu, Player player) {
-                return new ExampleChassisMenu(id, inventory, menu, ExampleChassis.this);
-            }
-
-            @Override
-            public Component getDisplayName() {
-                return ExampleChassis.this.getDisplayName();
-            }
-        };
-    }
+//    @Override
+//    public MenuProvider getMenuProvider() {
+//        return new MenuProvider() {
+//            @Override
+//            public AbstractContainerMenu createMenu(int id, Inventory menu, Player player) {
+//                return new ExampleChassisMenu(id, inventory, menu, ExampleChassis.this);
+//            }
+//
+//            @Override
+//            public Component getDisplayName() {
+//                return ExampleChassis.this.getDisplayName();
+//            }
+//        };
+//    }
 
     @Override
     protected MenuProvider getStantionMenuProvider() {

@@ -1,6 +1,9 @@
 package com.jetug.example.client.events;
 
-import com.jetug.example.common.registery.GuiRegistry;
+import com.jetug.example.client.screen.ExampleChassisScreen;
+import com.jetug.example.client.screen.ExampleChassisStationScreen;
+import com.jetug.example.common.registery.ContainerRegistry;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -10,6 +13,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ModScreensClass {
     @SubscribeEvent
     public static void clientLoad(FMLClientSetupEvent event) {
-        event.enqueueWork(GuiRegistry::register);
+        event.enqueueWork(() -> {
+            MenuScreens.register(ContainerRegistry.EXAMPLE_CHASSIS_MENU.get(), ExampleChassisScreen::new);
+            MenuScreens.register(ContainerRegistry.EXAMPLE_STATION_MENU.get(), ExampleChassisStationScreen::new);
+        });
     }
 }

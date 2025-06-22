@@ -46,7 +46,6 @@ public class InputEvents {
 
         handleInput(event.getKey(), action);
         handleDebugKeys(event);
-        //CommonInputHandler.onKeyInput(InputKey.getByKey(event.getKey()), action, getLocalPlayer());
     }
 
 

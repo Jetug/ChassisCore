@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.jetug.chassis_core.common.foundation.entity.ChassisBase.*;
+import static com.jetug.chassis_core.common.foundation.entity.Chassis.*;
 import static com.jetug.chassis_core.common.util.helpers.PlayerUtils.getLocalPlayerChassis;
 
 public class CustomHandRenderer extends GeoObjectRenderer<HandAnimator> {

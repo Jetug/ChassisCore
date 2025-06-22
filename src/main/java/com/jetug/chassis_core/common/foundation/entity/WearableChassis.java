@@ -4,15 +4,17 @@ import com.google.common.collect.ImmutableMap;
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.Global;
 import com.jetug.chassis_core.client.animators.HandAnimator;
-import com.jetug.chassis_core.client.model.RightHandModel;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
+import com.jetug.chassis_core.common.foundation.container.menu.ChassisMenu;
 import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
 import com.jetug.chassis_core.common.util.helpers.Speedometer;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.util.AzureLibUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -22,17 +24,19 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.jetug.chassis_core.common.data.constants.Resources.resourceLocation;
@@ -40,7 +44,7 @@ import static net.minecraft.util.Mth.cos;
 import static net.minecraft.util.Mth.sin;
 import static org.apache.logging.log4j.Level.DEBUG;
 
-public abstract class WearableChassis extends ChassisBase implements GeoEntity {
+public abstract class WearableChassis extends Chassis implements GeoEntity {
     public static final float ROTATION = (float) Math.PI / 180F;
     public static final int EFFECT_DURATION = 9;
     public static final HandAnimator HAND_ENTITY = new HandAnimator();
@@ -69,7 +73,7 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
 
 
     public static AttributeSupplier.Builder createAttributes() {
-        return ChassisBase.createLivingAttributes()
+        return Chassis.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 1000.0D)
                 .add(Attributes.ATTACK_DAMAGE, 0.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.1D)
@@ -179,16 +183,73 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
             livingEntity.yBodyRot = yBodyRot;
     }
 
+//    @Override
+//    public void travel(@NotNull Vec3 travelVector) {
+//        if (!isAlive()) return;
+//        if (isVehicle() && hasPassenger())
+//            travelWithPassenger(travelVector);
+//        else {
+////            this.flyingSpeed = 0.02F;
+//            super.travel(travelVector);
+//        }
+//    }
+
     @Override
-    public void travel(@NotNull Vec3 travelVector) {
+    public void travel(Vec3 travelVector) {
         if (!isAlive()) return;
+
+        if (getControllingPassenger() instanceof Player player) {
+            if (player.isCreative() && player.getAbilities().flying) {
+
+                float forward = player.zza;
+                float strafe = -player.xxa;
+                float vertical = 0.0f;
+
+                if (player.jumping) vertical += 1.0f;
+                if (player.isShiftKeyDown()) vertical -= 1.0f;
+
+                Vec3 motion = calculateFlightMotion(player, forward, strafe, vertical);
+
+                this.setDeltaMovement(motion);
+                this.move(MoverType.SELF, this.getDeltaMovement());
+
+
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.75));
+                this.fallDistance = 0.0f;
+                return;
+            }
+        }
+
         if (isVehicle() && hasPassenger())
             travelWithPassenger(travelVector);
         else {
-//            this.flyingSpeed = 0.02F;
             super.travel(travelVector);
         }
     }
+
+
+    private Vec3 calculateFlightMotion(Player player, float forward, float strafe, float vertical) {
+        // Увеличенная базовая скорость (в 4 раза)
+        float baseSpeed = 1.0f;
+        float speedModifier = player.isSprinting() ? 1.8f : 1.0f;
+        float speed = baseSpeed * speedModifier;
+
+        // Используем реальное направление взгляда игрока
+        Vec3 look = player.getLookAngle();
+
+        // Горизонтальные вектора (с исправлением направлений)
+        Vec3 forwardVec = new Vec3(look.x, 0, look.z).normalize().scale(forward);
+        Vec3 strafeVec = new Vec3(look.z, 0, -look.x).normalize().scale(strafe); // Перпендикулярный вектор
+
+        // Вертикальный вектор
+        Vec3 verticalVec = new Vec3(0, vertical, 0);
+
+        // Комбинируем вектора и применяем скорость
+        return forwardVec.add(strafeVec).add(verticalVec)
+                .normalize() // Нормализуем чтобы диагональ не была быстрее
+                .scale(speed);
+    }
+
 
     @Override
     public Vec3 getDismountLocationForPassenger(LivingEntity p_20123_) {
@@ -251,8 +312,12 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
 
         var provider = getMenuProvider();
 
-        if (isServerSide && provider != null) {
-            player.openMenu(getMenuProvider());
+        if (provider != null && player instanceof ServerPlayer serverPlayer) {
+            NetworkHooks.openScreen(
+                    serverPlayer,
+                    provider,
+                    buf -> buf.writeInt(this.getId())
+            );
         }
     }
 
@@ -273,16 +338,24 @@ public abstract class WearableChassis extends ChassisBase implements GeoEntity {
         return CROUCHING_DIMENSIONS;
     }
 
-    public WearableChassis(EntityType<? extends ChassisBase> type, Level worldIn) {
+    public WearableChassis(EntityType<? extends Chassis> type, Level worldIn) {
         super(type, worldIn);
     }
 
-    public WearableChassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
-        super(pEntityType, pLevel, partIdMap);
-    }
-
     @Nullable
-    protected abstract MenuProvider getMenuProvider();
+    protected MenuProvider getMenuProvider(){
+        return new MenuProvider() {
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+                return new ChassisMenu(containerId, inventory, playerInventory, WearableChassis.this);
+            }
+
+            @Override
+            public Component getDisplayName() {
+                return WearableChassis.this.getDisplayName();
+            }
+        };
+    };
 
     @Nullable
     protected abstract MenuProvider getStantionMenuProvider();

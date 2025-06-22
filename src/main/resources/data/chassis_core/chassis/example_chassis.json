@@ -1,5 +1,10 @@
 {
   "parts": [
-    "chassis_core:head_armor"
+    "chassis_core:head_armor"     ,
+    "chassis_core:body_armor"     ,
+    "chassis_core:left_arm_armor" ,
+    "chassis_core:right_arm_armor",
+    "chassis_core:left_leg_armor" ,
+    "chassis_core:right_leg_armor"
   ]
 }
