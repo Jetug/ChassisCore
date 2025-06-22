@@ -87,6 +87,13 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         super.tick();
         speedometer.tick();
         timer.tick();
+
+//        if (getControllingPassenger() instanceof Player player) {
+//            this.setNoGravity(player.getAbilities().flying);
+//        } else {
+//            this.setNoGravity(false);
+//        }
+
         updatePose();
     }
 
@@ -200,32 +207,49 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
 
         if (getControllingPassenger() instanceof Player player) {
             if (player.isCreative() && player.getAbilities().flying) {
-                // Получаем вектор взгляда игрока
+                // Полностью отключаем гравитацию
+                this.setNoGravity(true);
+
+                // Параметры ускорения
+                float acceleration = 0.1f;
+
+                // Получаем ввод игрока
+                float forward = player.zza;
+                float strafe = player.xxa;
+                float vertical = 0.0f;
+
+                if (player.jumping) vertical += 1.0f;
+                if (player.isShiftKeyDown()) vertical -= 1.0f;
+
+                // Рассчитываем желаемое направление
                 Vec3 look = player.getLookAngle();
+                Vec3 desiredMotion = calculateDesiredMotion(look, forward, strafe, vertical);
 
-                // Копируем логику полёта из Player.travel()
-                float speed = player.getAbilities().getWalkingSpeed() * 2.0f; // Базовая скорость
+                // Применяем ускорение к текущей скорости
+                Vec3 currentMotion = this.getDeltaMovement();
+                Vec3 newMotion = applyAcceleration(currentMotion, desiredMotion, acceleration);
+
+                // Учитываем скорость полета игрока
+                float speedFactor = player.getAbilities().getFlyingSpeed() * 2.0f;
                 if (player.isSprinting()) {
-                    speed *= 2.0f; // Удвоение скорости при спринте
+                    speedFactor *= 2.0f;
                 }
-
-                // Рассчитываем движение
-                Vec3 motion = calculateCreativeFlightMotion(player, look, speed);
+                newMotion = newMotion.scale(speedFactor);
 
                 // Применяем движение
-                this.setDeltaMovement(motion);
+                this.setDeltaMovement(newMotion);
                 this.move(MoverType.SELF, this.getDeltaMovement());
 
-                // Замедление и гравитация как у игрока
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.99));
-                this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.05, 0));
+                // Применяем замедление (как в оригинальном креативном полете)
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.91));
 
-                // Сброс падения
+                // Сбрасываем падение
                 this.fallDistance = 0.0f;
                 return;
             }
         }
 
+//        this.setNoGravity(false);
         if (isVehicle() && hasPassenger())
             travelWithPassenger(travelVector);
         else {
@@ -241,25 +265,29 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         return super.isNoGravity();
     }
 
-    private Vec3 calculateCreativeFlightMotion(Player player, Vec3 look, float speed) {
-        // Вектор движения (WASD + пробел/шифт)
-        float forward = player.zza;
-        float strafe = player.xxa;
-        float vertical = 0.0f;
+    private Vec3 calculateDesiredMotion(Vec3 look, float forward, float strafe, float vertical) {
+        // Горизонтальное движение (вперед/назад и влево/вправо)
+        Vec3 horizontal = new Vec3(look.x, 0, look.z).normalize()
+                .scale(forward)
+                .add(new Vec3(look.z, 0, -look.x).normalize().scale(strafe));
 
-        if (player.jumping) vertical += 0.5f; // Вверх
-        if (player.isShiftKeyDown()) vertical -= 0.5f; // Вниз
+        // Вертикальное движение
+        Vec3 verticalVec = new Vec3(0, vertical, 0);
 
-        // Горизонтальные векторы
-        Vec3 forwardVec = new Vec3(look.x, 0, look.z).normalize().scale(forward);
-        Vec3 strafeVec = new Vec3(look.z, 0, -look.x).normalize().scale(strafe);
+        // Комбинируем и нормализуем
+        return horizontal.add(verticalVec).normalize();
+    }
 
-        // Комбинируем векторы с учетом скорости
+    private Vec3 applyAcceleration(Vec3 current, Vec3 desired, float acceleration) {
         return new Vec3(
-                (forwardVec.x + strafeVec.x) * speed,
-                vertical * speed,
-                (forwardVec.z + strafeVec.z) * speed
+                lerp(current.x, desired.x, acceleration),
+                lerp(current.y, desired.y, acceleration),
+                lerp(current.z, desired.z, acceleration)
         );
+    }
+
+    private double lerp(double a, double b, float t) {
+        return a + (b - a) * t;
     }
 
     @Override
