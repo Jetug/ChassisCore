@@ -6,7 +6,7 @@ import com.jetug.chassis_core.Global;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.container.menu.DynamicChassisMenu;
+import com.jetug.chassis_core.common.foundation.container.menu.ChassisMenu;
 import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
 import com.jetug.chassis_core.common.util.helpers.Speedometer;
 import mod.azure.azurelib.animatable.GeoEntity;
