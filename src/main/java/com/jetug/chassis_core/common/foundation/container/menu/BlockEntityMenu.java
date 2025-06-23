@@ -16,7 +16,7 @@ public class BlockEntityMenu extends MenuBase {
 
     public BlockEntityMenu(MenuType<?> pMenuType, int containerId, Container container, Inventory playerInventory,
                            BlockEntity entity, int size, int inventoryPosY, Block block) {
-        super(pMenuType, containerId, container, playerInventory, size, inventoryPosY);
+        super(pMenuType, containerId, container, playerInventory, inventoryPosY);
         this.blockEntity = entity;
         this.level = playerInventory.player.level();
         this.block = block;

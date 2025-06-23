@@ -20,7 +20,7 @@ public class ExampleChassisMenu extends EntityMenu {
     }
 
     public ExampleChassisMenu(int containerId, Container container, Inventory playerInventory, Chassis entity) {
-        super(EXAMPLE_CHASSIS_MENU.get(), containerId, container, playerInventory, entity, SIZE, INVENTORY_POS_Y);
+        super(EXAMPLE_CHASSIS_MENU.get(), containerId, container, playerInventory, entity, INVENTORY_POS_Y);
         createSlot(ChassisPart.HELMET, new Pos2I(82, 11));
         createSlot(ChassisPart.BODY_ARMOR, new Pos2I(82, 32));
         createSlot(ChassisPart.RIGHT_ARM_ARMOR, new Pos2I(61, 26));

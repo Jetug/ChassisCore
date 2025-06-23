@@ -15,12 +15,10 @@ import javax.annotation.Nullable;
 
 public abstract class EntityMenu extends MenuBase {
     protected final Chassis chassis;
-    //private final HashMap<String, Integer> slotsMap = new HashMap<>();
-    //private Integer slotId = 0;
 
     public EntityMenu(MenuType<?> pMenuType, int containerId, Container container, Inventory playerInventory,
-                      Chassis entity, int size, int inventoryPosY) {
-        super(pMenuType, containerId, container, playerInventory, size, inventoryPosY);
+                      Chassis entity, int inventoryPosY) {
+        super(pMenuType, containerId, container, playerInventory, inventoryPosY);
         this.chassis = entity;
     }
 

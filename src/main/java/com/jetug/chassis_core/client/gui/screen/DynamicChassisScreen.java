@@ -1,7 +1,7 @@
 package com.jetug.chassis_core.client.gui.screen;
 
 import com.jetug.chassis_core.ChassisCore;
-import com.jetug.chassis_core.common.foundation.container.menu.ChassisMenu;
+import com.jetug.chassis_core.common.foundation.container.menu.DynamicChassisMenu;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -12,11 +12,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class DynamicChassisScreen extends ChassisScreen<ChassisMenu> {
+public class DynamicChassisScreen extends ChassisScreen<DynamicChassisMenu> {
     public static final ResourceLocation POWER_ARMOR_GUI =
             new ResourceLocation(ChassisCore.MOD_ID, "textures/screens/example_chassis/example_chassis_inventory.png");
 
-    public DynamicChassisScreen(ChassisMenu container, Inventory inventory, Component name) {
+    public DynamicChassisScreen(DynamicChassisMenu container, Inventory inventory, Component name) {
         super(container, inventory, name, POWER_ARMOR_GUI);
     }
 

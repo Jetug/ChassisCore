@@ -4,6 +4,7 @@ import com.jetug.chassis_core.client.render.utils.*;
 import com.jetug.chassis_core.common.config.ChassisConfig;
 import com.jetug.chassis_core.common.data.json.*;
 import com.jetug.chassis_core.common.events.*;
+import com.jetug.chassis_core.common.foundation.container.menu.DynamicChassisMenu;
 import com.jetug.chassis_core.common.foundation.item.*;
 import com.jetug.chassis_core.common.network.PacketHandler;
 import com.jetug.chassis_core.common.network.managers.ConfigSupplier;
@@ -13,15 +14,20 @@ import com.jetug.chassis_core.common.util.helpers.timer.*;
 import mod.azure.azurelib.cache.object.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerListener;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,7 +53,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.addAll;
 
 public class Chassis extends EmptyLivingEntity implements ContainerListener {
-    public static final int INVENTORY_SIZE = 6;
+//    public static final int INVENTORY_SIZE = 6;
 //    public static HashMap<ChassisPart, Integer> PART_IDS = new HashMap<>();
 //
 //    static {
@@ -366,6 +372,21 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
         initInventory();
         deserializeInventory(inventory, nbtTags);
     }
+
+    @Nullable
+    protected MenuProvider getMenuProvider(){
+        return new MenuProvider() {
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+                return new DynamicChassisMenu(containerId, inventory, playerInventory, Chassis.this);
+            }
+
+            @Override
+            public Component getDisplayName() {
+                return Chassis.this.getDisplayName();
+            }
+        };
+    };
 
     protected float getMinSpeed() {
         return 0.05f;

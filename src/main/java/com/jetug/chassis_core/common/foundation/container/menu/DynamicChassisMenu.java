@@ -12,16 +12,16 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.jetug.chassis_core.common.foundation.registery.ContainerRegistry.CHASSIS_MENU;
 
-public class ChassisMenu extends EntityMenu {
-    public static final int SIZE = 7;
+public class DynamicChassisMenu extends EntityMenu {
+    public static final int SIZE = 6;
     private static final int INVENTORY_POS_Y = 84;
 
-    public ChassisMenu(int i, Inventory playerInventory, FriendlyByteBuf buf) {
+    public DynamicChassisMenu(int i, Inventory playerInventory, FriendlyByteBuf buf) {
         this(i, new SimpleContainer(SIZE), playerInventory, getChassis(buf));
     }
 
-    public ChassisMenu(int containerId, Container container, Inventory playerInventory, Chassis entity) {
-        super(CHASSIS_MENU.get(), containerId, container, playerInventory, entity, SIZE, INVENTORY_POS_Y);
+    public DynamicChassisMenu(int containerId, Container container, Inventory playerInventory, Chassis entity) {
+        super(CHASSIS_MENU.get(), containerId, container, playerInventory, entity, INVENTORY_POS_Y);
         createSlot(ChassisPart.HELMET, new Pos2I(82, 11));
         createSlot(ChassisPart.BODY_ARMOR, new Pos2I(82, 32));
         createSlot(ChassisPart.RIGHT_ARM_ARMOR, new Pos2I(61, 26));

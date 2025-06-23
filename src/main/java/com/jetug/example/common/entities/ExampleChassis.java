@@ -28,7 +28,7 @@ import static mod.azure.azurelib.core.animation.Animation.LoopType.PLAY_ONCE;
 import static mod.azure.azurelib.core.animation.RawAnimation.begin;
 
 public class ExampleChassis extends WearableChassis {
-    public static final int INVENTORY_SIZE = Chassis.INVENTORY_SIZE + 6;
+//    public static final int INVENTORY_SIZE = Chassis.INVENTORY_SIZE + 6;
     public static final ResourceLocation ICON
             = new ResourceLocation(ChassisCore.MOD_ID, "textures/items/power_armor_frame.png");
     public static final ExampleChassisHand HAND = new ExampleChassisHand();
