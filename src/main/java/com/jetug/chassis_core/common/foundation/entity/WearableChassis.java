@@ -6,12 +6,13 @@ import com.jetug.chassis_core.Global;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.client.render.renderers.CustomHandRenderer;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.container.menu.ChassisMenu;
+import com.jetug.chassis_core.common.foundation.container.menu.DynamicChassisMenu;
 import com.jetug.chassis_core.common.foundation.item.ChassisEquipment;
 import com.jetug.chassis_core.common.util.helpers.Speedometer;
 import mod.azure.azurelib.animatable.GeoEntity;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.util.AzureLibUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +30,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,6 +40,8 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.jetug.chassis_core.common.data.constants.Resources.resourceLocation;
@@ -201,8 +206,9 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
 //        }
 //    }
 
+    @Override
     public float getFlyingSpeed() {
-        if (hasPlayerPassenger() && isFlying() && !this.isPassenger()) {
+        if (hasPlayerPassenger() && isPlayerFlying() && !this.isPassenger()) {
             var speed = this.getPlayerPassenger().getAbilities().getFlyingSpeed();
             return this.isSprinting() ? speed * 2.0F : speed;
         } else {
@@ -211,55 +217,28 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
     }
 
     @Override
+    public boolean isAffectedByFluids() {
+        return isPlayerFlying();
+    }
+
+    @Override
+    public boolean isCrouching() {
+        if (hasPlayerPassenger()) {
+            return getPlayerPassenger().isShiftKeyDown();
+        }
+        return super.isCrouching();
+    }
+
+    @Override
     public void travel(Vec3 travelVector) {
         if (!isAlive()) return;
 
-        if (getControllingPassenger() instanceof Player player) {
-            if (isFlying()) {
-                // Полностью отключаем гравитацию
-                this.setNoGravity(true);
-                setRotationMatchingPassenger(player);
-
-                // Параметры ускорения
-                float acceleration = 0.1f;
-
-                // Получаем ввод игрока
-                float forward = player.zza;
-                float strafe = player.xxa;
-                float vertical = 0.0f;
-
-                if (player.jumping) vertical += 1.0f;
-                if (player.isShiftKeyDown()) vertical -= 1.0f;
-
-                // Рассчитываем желаемое направление
-                Vec3 look = player.getLookAngle();
-                Vec3 desiredMotion = calculateDesiredMotion(look, forward, strafe, vertical);
-
-                // Применяем ускорение к текущей скорости
-                Vec3 currentMotion = this.getDeltaMovement();
-                Vec3 newMotion = applyAcceleration(currentMotion, desiredMotion, acceleration);
-
-                // Учитываем скорость полета игрока
-                float speedFactor = player.getAbilities().getWalkingSpeed() * 10.0f;
-                if (player.isSprinting()) {
-                    speedFactor *= 1.2f;
-                }
-                newMotion = newMotion.scale(speedFactor);
-
-                // Применяем движение
-                this.setDeltaMovement(newMotion);
-                this.move(MoverType.SELF, this.getDeltaMovement());
-
-                // Применяем замедление (как в оригинальном креативном полете)
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.8));
-
-                // Сбрасываем падение
-                this.fallDistance = 0.0f;
-                return;
-            }
+        if (isPlayerFlying()) {
+            creativeFlyTravel();
+            return;
         }
 
-//        this.setNoGravity(false);
+        this.setNoGravity(false);
         if (isVehicle() && hasPassenger())
             travelWithPassenger(travelVector);
         else {
@@ -267,8 +246,62 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         }
     }
 
-    private boolean isFlying() {
-        return getControllingPassenger() instanceof Player player && player.isCreative() && player.getAbilities().flying;
+    @Override
+    public boolean isShiftKeyDown() {
+        return getControllingPassenger() instanceof Player player ?
+                player.isShiftKeyDown() :
+                super.isShiftKeyDown();
+    }
+
+    @Override
+    protected Vec3 maybeBackOffFromEdge(Vec3 pVec, MoverType pMover) {
+        if (!isPlayerFlying() && pVec.y <= 0 && (pMover == MoverType.SELF || pMover == MoverType.PLAYER) && this.isShiftKeyDown() && this.isAboveGround()) {
+            var x = pVec.x;
+            var z = pVec.z;
+            var edge = 0.05;
+
+            while(x != 0 && this.level().noCollision(this, this.getBoundingBox().move(x, (-this.maxUpStep()), 0))) {
+                if (x < edge && x >= -edge) {
+                    x = 0;
+                } else if (x > 0) {
+                    x -= edge;
+                } else {
+                    x += edge;
+                }
+            }
+
+            while(z != 0 && this.level().noCollision(this, this.getBoundingBox().move(0, (-this.maxUpStep()), z))) {
+                if (z < edge && z >= -edge) {
+                    z = 0;
+                } else if (z > 0) {
+                    z -= edge;
+                } else {
+                    z += edge;
+                }
+            }
+
+            while(x != 0 && z != 0 && this.level().noCollision(this, this.getBoundingBox().move(x, (-this.maxUpStep()), z))) {
+                if (x < edge && x >= -edge) {
+                    x = 0;
+                } else if (x > 0) {
+                    x -= edge;
+                } else {
+                    x += edge;
+                }
+
+                if (z < edge && z >= -edge) {
+                    z = 0;
+                } else if (z > 0) {
+                    z -= edge;
+                } else {
+                    z += edge;
+                }
+            }
+
+            pVec = new Vec3(x, pVec.y, z);
+        }
+
+        return pVec;
     }
 
     @Override
@@ -327,6 +360,12 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         if (hasPassenger())
             return super.tickHeadTurn(pYRot, pAnimStep);
         return pAnimStep;
+    }
+
+    @Override
+    public float maxUpStep() {
+        float f = super.maxUpStep();
+        return !hasPlayerPassenger() ? Math.max(f, 1.0F) : f;
     }
 
     @Override
@@ -487,6 +526,16 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
         entity.startRiding(this);
     }
 
+    public void exitArmor(){
+        if(hasPassenger()){
+            getControllingPassenger().stopRiding();
+        }
+    }
+
+    protected boolean isPlayerFlying() {
+        return getControllingPassenger() instanceof Player player && player.isCreative() && player.getAbilities().flying;
+    }
+
     private float getDamageAfterAbsorb(float damage) {
         updateTotalArmor();
         return CombatRules.getDamageAfterAbsorb(damage, totalDefense, totalToughness);
@@ -498,12 +547,6 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
 
     private double getCustomJump() {
         return this.getAttributeValue(Attributes.JUMP_STRENGTH);
-    }
-
-    public void exitArmor(){
-        if(hasPassenger()){
-            getControllingPassenger().stopRiding();
-        }
     }
 
 //    @Override
@@ -527,32 +570,67 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
 //        }
 //    }
 
-    public float maxUpStep() {
-        float f = super.maxUpStep();
-        return !hasPlayerPassenger() ? Math.max(f, 1.0F) : f;
-    }
-
     private void travelWithPassenger(Vec3 travelVector) {
         var entity = getControllingPassenger();
         if(entity == null) return;
         setRotationMatchingPassenger(entity);
 
-//        if(entity.yya > 0)
-//            jumpScale = 1.0F;
-
         if (jumpScale > 0.0F && !isJumping() && onGround())
             jump(entity);
 
-//        this.flyingSpeed = getSpeed() * 0.1F;
-
-        if (isControlledByLocalInstance())
+        if (isControlledByLocalInstance()) {
             super.travel(new Vec3(entity.xxa, travelVector.y, entity.zza));
+        }
         else setDeltaMovement(Vec3.ZERO);
-
         if (onGround()) {
             jumpScale = 0.0F;
             isJumping = false;
         }
+    }
+
+    private void creativeFlyTravel() {
+        var player = getPlayerPassenger();
+        this.setNoGravity(true);
+        setRotationMatchingPassenger(player);
+
+        var acceleration = 0.1f;
+        var forward = player.zza;
+        var strafe = player.xxa;
+        var vertical = 0.0f;
+
+        if (player.jumping) vertical += 1.0f;
+        if (player.isShiftKeyDown()) vertical -= 1.0f;
+
+        var look = player.getLookAngle();
+        var desiredMotion = calculateDesiredMotion(look, forward, strafe, vertical);
+        var currentMotion = this.getDeltaMovement();
+        var newMotion = applyAcceleration(currentMotion, desiredMotion, acceleration);
+        var speedFactor = player.getAbilities().getWalkingSpeed() * 10.0f;
+
+        if (player.isSprinting()) {
+            speedFactor *= 1.2f;
+        }
+        newMotion = newMotion.scale(speedFactor);
+
+
+        this.setDeltaMovement(newMotion);
+        this.move(MoverType.SELF, this.getDeltaMovement());
+
+
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.8));
+
+
+        this.fallDistance = 0.0f;
+    }
+
+    private boolean isAboveGround() {
+        return this.onGround()
+                || this.fallDistance < this.maxUpStep()
+                && !this.level().noCollision(this, getMove());
+    }
+
+    private @NotNull AABB getMove() {
+        return this.getBoundingBox().move(0, this.fallDistance - this.maxUpStep(), 0);
     }
 
     private void jump(LivingEntity entity) {

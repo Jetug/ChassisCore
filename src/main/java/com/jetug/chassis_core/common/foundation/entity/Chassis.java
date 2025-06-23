@@ -94,7 +94,6 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
     protected float totalToughness;
     protected int inventorySize = 6;
 
-
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
@@ -151,7 +150,7 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
     }
 
     public int getInventorySize() {
-        return inventorySize;
+        return partIdMap.size();
     }
 
     public void damageArmor(DamageSource damageSource, float damage) {
