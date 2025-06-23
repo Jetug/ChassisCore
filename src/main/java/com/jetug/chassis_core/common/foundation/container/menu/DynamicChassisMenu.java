@@ -17,7 +17,13 @@ public class DynamicChassisMenu extends EntityMenu {
     private static final int INVENTORY_POS_Y = 84;
 
     public DynamicChassisMenu(int i, Inventory playerInventory, FriendlyByteBuf buf) {
-        this(i, new SimpleContainer(SIZE), playerInventory, getChassis(buf));
+        super(CHASSIS_MENU.get(), i, playerInventory, buf, INVENTORY_POS_Y);
+        createSlot(ChassisPart.HELMET, new Pos2I(82, 11));
+        createSlot(ChassisPart.BODY_ARMOR, new Pos2I(82, 32));
+        createSlot(ChassisPart.RIGHT_ARM_ARMOR, new Pos2I(61, 26));
+        createSlot(ChassisPart.LEFT_ARM_ARMOR, new Pos2I(103, 26));
+        createSlot(ChassisPart.RIGHT_LEG_ARMOR, new Pos2I(69, 54));
+        createSlot(ChassisPart.LEFT_LEG_ARMOR, new Pos2I(95, 54));
     }
 
     public DynamicChassisMenu(int containerId, Container container, Inventory playerInventory, Chassis entity) {

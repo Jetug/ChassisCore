@@ -116,8 +116,12 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
         noCulling = true;
         initInventory();
         updateParams();
-
         loadSlots();
+    }
+
+    public int updateInventorySize(){
+        loadSlots();
+        return this.inventorySize;
     }
 
     private void loadSlots() {
