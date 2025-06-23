@@ -21,8 +21,8 @@ public class NbtUtils {
         return tag;
     }
 
-    public static <R> Set<R> deserializeSet(CompoundTag tag, Function<String, R> deserializer){
-        var set = new HashSet<R>();
+    public static <R> LinkedHashSet<R> deserializeSet(CompoundTag tag, Function<String, R> deserializer){
+        var set = new LinkedHashSet<R>();
 
         for (var key: tag.getAllKeys()) {
             if(tag.contains(key, Tag.TAG_STRING)) {

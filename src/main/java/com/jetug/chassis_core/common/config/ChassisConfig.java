@@ -7,10 +7,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ChassisConfig implements INBTSerializable<CompoundTag>{
-    @Ignored private Set<ChassisPart> parts;
+    @Ignored private LinkedHashSet<ChassisPart> parts;
 
     @Override
     public CompoundTag serializeNBT() {
@@ -38,7 +39,7 @@ public class ChassisConfig implements INBTSerializable<CompoundTag>{
         return config;
     }
 
-    public Set<ChassisPart> getParts() {
+    public LinkedHashSet<ChassisPart> getParts() {
         return parts;
     }
 
@@ -65,7 +66,7 @@ public class ChassisConfig implements INBTSerializable<CompoundTag>{
             return this.config.copy();
         }
 
-        public ChassisConfig.Builder setParts(Set<ChassisPart> parts) {
+        public ChassisConfig.Builder setParts(LinkedHashSet<ChassisPart> parts) {
             this.config.parts = parts;
             return this;
         }

@@ -4,7 +4,6 @@ import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
 import com.jetug.chassis_core.common.foundation.container.slot.EquipmentSlot;
 import com.jetug.chassis_core.common.foundation.entity.Chassis;
-import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
 import com.jetug.chassis_core.common.util.Pos2I;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,7 +21,7 @@ import javax.annotation.Nullable;
 import static com.jetug.chassis_core.common.data.constants.Gui.*;
 import static java.lang.System.out;
 
-public abstract class EntityMenu extends AbstractContainerMenu {
+public abstract class ChassisMenu extends AbstractContainerMenu {
     private static final int SLOT_SIZE = 18;
     private static final int INVENTORY_POS_X = 8;
     private static final int HOTBAR_POS_X = INVENTORY_POS_X;
@@ -34,7 +33,7 @@ public abstract class EntityMenu extends AbstractContainerMenu {
     protected final Chassis chassis;
     protected int size;
 
-    public EntityMenu(MenuType<?> pMenuType, int containerId, Inventory playerInventory, FriendlyByteBuf buf, int inventoryPosY) {
+    public ChassisMenu(MenuType<?> pMenuType, int containerId, Inventory playerInventory, FriendlyByteBuf buf, int inventoryPosY) {
         super(pMenuType, containerId);
         this.chassis = (Chassis) Minecraft.getInstance().level.getEntity(buf.readInt());
         this.container = new SimpleContainer(6);
@@ -46,8 +45,8 @@ public abstract class EntityMenu extends AbstractContainerMenu {
         addPlayerHotbar(playerInventory);
     }
 
-    public EntityMenu(MenuType<?> pMenuType, int containerId, Container container, Inventory playerInventory,
-                      Chassis entity, int inventoryPosY) {
+    public ChassisMenu(MenuType<?> pMenuType, int containerId, Container container, Inventory playerInventory,
+                       Chassis entity, int inventoryPosY) {
         super(pMenuType, containerId);
         this.chassis = entity;
         this.container = container;
@@ -91,7 +90,6 @@ public abstract class EntityMenu extends AbstractContainerMenu {
         } catch (Exception ignored) {
             return ItemStack.EMPTY;
         }
-
     }
 
     @Override
@@ -108,7 +106,6 @@ public abstract class EntityMenu extends AbstractContainerMenu {
     protected Integer getId(ChassisPart chassisPart) {
         return chassis.getPartId(chassisPart);
     }
-
 
     protected void createSlot(ChassisPart chassisPart, Pos2I pos) {
         try {

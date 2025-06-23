@@ -1,7 +1,7 @@
 package com.jetug.example.common.container;
 
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.container.menu.EntityMenu;
+import com.jetug.chassis_core.common.foundation.container.menu.ChassisMenu;
 import com.jetug.chassis_core.common.foundation.entity.Chassis;
 import com.jetug.chassis_core.common.util.Pos2I;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 import static com.jetug.example.common.registery.ContainerRegistry.EXAMPLE_CHASSIS_MENU;
 
-public class ExampleChassisMenu extends EntityMenu {
+public class ExampleChassisMenu extends ChassisMenu {
     public static final int SIZE = 7;
     private static final int INVENTORY_POS_Y = 84;
 
