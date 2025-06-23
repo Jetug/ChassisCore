@@ -63,11 +63,9 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
             .put(Pose.CROUCHING, getCrouchingDimensions())
             .build();
 
-    @Override
-    public @NotNull EntityDimensions getDimensions(@NotNull Pose pPose) {
-        return POSES.getOrDefault(pPose, STANDING_DIMENSIONS);
+    public WearableChassis(EntityType<? extends Chassis> type, Level worldIn) {
+        super(type, worldIn);
     }
-
 
     public static AttributeSupplier.Builder createAttributes() {
         return Chassis.createLivingAttributes()
@@ -77,6 +75,12 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
                 .add(Attributes.ATTACK_KNOCKBACK, 0.0D)
                 .add(Attributes.JUMP_STRENGTH, 0.5D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D);
+    }
+
+
+    @Override
+    public @NotNull EntityDimensions getDimensions(@NotNull Pose pPose) {
+        return POSES.getOrDefault(pPose, STANDING_DIMENSIONS);
     }
 
     @Override
@@ -421,11 +425,6 @@ public abstract class WearableChassis extends Chassis implements GeoEntity {
     public EntityDimensions getCrouchingDimensions(){
         return CROUCHING_DIMENSIONS;
     }
-
-    public WearableChassis(EntityType<? extends Chassis> type, Level worldIn) {
-        super(type, worldIn);
-    }
-
 
 
     @Nullable

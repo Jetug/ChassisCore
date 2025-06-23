@@ -98,18 +98,18 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
     public SimpleContainer inventory;
     protected float totalDefense;
     protected float totalToughness;
-    protected int inventorySize = 6;
+    private int inventorySize = 0;
 
     private ListTag serializedInventory;
     private Container previousContainer;
     private int tickTimer = 10;
     private int tickTimer5 = 5;
 
-    public Chassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
-        this(pEntityType, pLevel);
-        this.partIdMap = partIdMap;
-        this.inventorySize = partIdMap.size();
-    }
+//    public Chassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel, HashMap<ChassisPart, Integer> partIdMap) {
+//        this(pEntityType, pLevel);
+//        this.partIdMap = partIdMap;
+//        this.inventorySize = partIdMap.size();
+//    }
 
     public Chassis(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -117,10 +117,15 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
         initInventory();
         updateParams();
 
+        loadSlots();
+    }
+
+    private void loadSlots() {
         var i = 0;
         for (var part : getConfig().getParts()) {
             partIdMap.put(part, i++);
         }
+        this.inventorySize = partIdMap.size();
     }
 
     public static ChassisEquipment getAsChassisEquipment(ItemStack itemStack) {
@@ -156,7 +161,7 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
     }
 
     public int getInventorySize() {
-        return partIdMap.size();
+        return inventorySize;
     }
 
     public void damageArmor(DamageSource damageSource, float damage) {
@@ -341,6 +346,7 @@ public class Chassis extends EmptyLivingEntity implements ContainerListener {
 
     protected void initInventory() {
         SimpleContainer inventoryBuff = this.inventory;
+        loadSlots();
         this.inventory = new SimpleContainer(inventorySize);
         if (inventoryBuff != null) {
             inventoryBuff.removeListener(this);

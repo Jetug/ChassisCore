@@ -1,62 +1,34 @@
 package com.jetug.example.common.entities;
 
 import com.jetug.chassis_core.ChassisCore;
-import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.foundation.entity.Chassis;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
-import com.jetug.example.common.container.ExampleChassisMenu;
 import com.jetug.example.common.container.ExampleChassisStationMenu;
-import mod.azure.azurelib.core.animation.AnimatableManager;
-import mod.azure.azurelib.core.animation.AnimationController;
-import mod.azure.azurelib.core.animation.RawAnimation;
+import mod.azure.azurelib.core.animation.*;
 import mod.azure.azurelib.core.object.PlayState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.damagesource.*;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.entity.player.*;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.level.Level;
 
 import static com.jetug.example.common.ArmorChassisAnimation.*;
-import static mod.azure.azurelib.core.animation.Animation.LoopType.LOOP;
-import static mod.azure.azurelib.core.animation.Animation.LoopType.PLAY_ONCE;
+import static mod.azure.azurelib.core.animation.Animation.LoopType.*;
 import static mod.azure.azurelib.core.animation.RawAnimation.begin;
 
 public class ExampleChassis extends WearableChassis {
-//    public static final int INVENTORY_SIZE = Chassis.INVENTORY_SIZE + 6;
     public static final ResourceLocation ICON
             = new ResourceLocation(ChassisCore.MOD_ID, "textures/items/power_armor_frame.png");
     public static final ExampleChassisHand HAND = new ExampleChassisHand();
-
-//    public static HashMap<ChassisPart, Integer> POWER_ARMOR_PART_IDS;
-//
-//    static {
-//        POWER_ARMOR_PART_IDS = (HashMap<ChassisPart, Integer>) PART_IDS.clone();
-//    }
 
     public RawAnimation currentAnimation = null;
 
     public ExampleChassis(EntityType<? extends WearableChassis> type, Level worldIn) {
         super(type, worldIn);
     }
-
-//    public static int getId(ChassisPart chassisPart) {
-//        return POWER_ARMOR_PART_IDS.get(chassisPart);
-//    }
-
-//    @Override
-//    public Collection<String> getEquipment() {
-//        return List.of(armorParts);
-//    }
-
-//    private static void addSlot(ChassisPart slot) {
-//        POWER_ARMOR_PART_IDS.put(slot, PART_IDS.size());
-//    }
 
     @Override
     public boolean hurt(DamageSource damageSource, float damage) {
