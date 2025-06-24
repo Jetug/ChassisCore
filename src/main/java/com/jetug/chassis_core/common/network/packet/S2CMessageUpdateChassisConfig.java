@@ -14,30 +14,30 @@ import com.jetug.chassis_core.client.network.*;
  * Author: MrCrayfish
  */
 public class S2CMessageUpdateChassisConfig extends PlayMessage<S2CMessageUpdateChassisConfig> {
-    private ImmutableMap<ResourceLocation, ChassisConfig> registeredGuns;
+    private ImmutableMap<ResourceLocation, ChassisConfig> registeredConfigs;
 
     public S2CMessageUpdateChassisConfig() {}
 
     @Override
     public void encode(S2CMessageUpdateChassisConfig message, FriendlyByteBuf buffer) {
         Validate.notNull(NetworkChassisManager.get());
-        NetworkChassisManager.get().writeRegisteredAmmo(buffer);
+        NetworkChassisManager.get().writeRegisteredConfig(buffer);
     }
 
     @Override
     public S2CMessageUpdateChassisConfig decode(FriendlyByteBuf buffer) {
         S2CMessageUpdateChassisConfig message = new S2CMessageUpdateChassisConfig();
-        message.registeredGuns = NetworkChassisManager.readRegisteredAmmo(buffer);
+        message.registeredConfigs = NetworkChassisManager.readRegisteredConfigs(buffer);
         return message;
     }
 
     @Override
     public void handle(S2CMessageUpdateChassisConfig message, MessageContext supplier) {
-        supplier.execute((() -> ClientPlayHandler.handleUpdateAmmo(message)));
+        supplier.execute((() -> ClientPlayHandler.handleUpdateChassis(message)));
         supplier.setHandled(true);
     }
 
-    public ImmutableMap<ResourceLocation, ChassisConfig> getRegisteredAmmo() {
-        return this.registeredGuns;
+    public ImmutableMap<ResourceLocation, ChassisConfig> getRegisteredConfig() {
+        return this.registeredConfigs;
     }
 }

@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChassisPart extends ResourceHolder {
-    public static final ChassisPart HELMET          = new ChassisPart("head_armor"      );
-    public static final ChassisPart BODY_ARMOR      = new ChassisPart("body_armor"      );
-    public static final ChassisPart LEFT_ARM_ARMOR  = new ChassisPart("left_arm_armor"  );
-    public static final ChassisPart RIGHT_ARM_ARMOR = new ChassisPart("right_arm_armor" );
-    public static final ChassisPart LEFT_LEG_ARMOR  = new ChassisPart("left_leg_armor"  ); //5
-    public static final ChassisPart RIGHT_LEG_ARMOR = new ChassisPart("right_leg_armor" );
+    public static final ChassisPart HELMET          = new ChassisPart("head"      );
+    public static final ChassisPart BODY_ARMOR      = new ChassisPart("body"      );
+    public static final ChassisPart LEFT_ARM_ARMOR  = new ChassisPart("left_arm"  );
+    public static final ChassisPart RIGHT_ARM_ARMOR = new ChassisPart("right_arm" );
+    public static final ChassisPart LEFT_LEG_ARMOR  = new ChassisPart("left_leg"  ); //5
+    public static final ChassisPart RIGHT_LEG_ARMOR = new ChassisPart("right_leg" );
     public static final ChassisPart ENGINE          = new ChassisPart("engine");
     public static final ChassisPart BACK            = new ChassisPart("back");
     public static final ChassisPart COOLING         = new ChassisPart("cooling");

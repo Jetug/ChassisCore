@@ -7,8 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ChassisConfig implements INBTSerializable<CompoundTag>{
     @Ignored private LinkedHashSet<ChassisPart> parts;

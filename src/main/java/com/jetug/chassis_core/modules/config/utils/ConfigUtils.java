@@ -2,6 +2,7 @@ package com.jetug.chassis_core.modules.config.utils;
 
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.modules.config.annotation.Validator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;

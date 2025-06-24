@@ -1,8 +1,9 @@
 package com.jetug.chassis_core.common.foundation.item;
 
 import com.jetug.chassis_core.client.render.utils.ResourceHelper;
+import com.jetug.chassis_core.common.config.EquipmentConfig;
 import com.jetug.chassis_core.common.data.holders.ChassisPart;
-import com.jetug.chassis_core.common.data.json.EquipmentConfig;
+import com.jetug.chassis_core.common.network.managers.ConfigSupplier;
 import mod.azure.azurelib.animatable.GeoItem;
 import mod.azure.azurelib.core.animatable.instance.AnimatableInstanceCache;
 import mod.azure.azurelib.core.animation.AnimatableManager;
@@ -22,11 +23,12 @@ import static com.jetug.chassis_core.common.foundation.item.StackUtils.DEFAULT;
 import static com.jetug.chassis_core.common.foundation.item.StackUtils.getVariant;
 import static mod.azure.azurelib.util.AzureLibUtil.createInstanceCache;
 
-public class ChassisEquipment extends Item implements GeoItem {
+public class ChassisEquipment extends Item implements IChassisEquipment, GeoItem {
     public final ChassisPart part;
     private final AnimatableInstanceCache cache = createInstanceCache(this);
     private final Lazy<String> name = Lazy.of(() -> ResourceHelper.getResourceName(ForgeRegistries.ITEMS.getKey(this)));
-    private final Lazy<EquipmentConfig> config = Lazy.of(() -> modResourceManager.getEquipmentConfig(getName()));
+//    private final Lazy<EquipmentConfig> config = Lazy.of(() -> modResourceManager.getEquipmentConfig(getName()));
+    private  EquipmentConfig config = new EquipmentConfig();
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
     public ChassisEquipment(Properties pProperties, ChassisPart part) {
@@ -43,7 +45,12 @@ public class ChassisEquipment extends Item implements GeoItem {
 
     @Nullable
     public EquipmentConfig getConfig() {
-        return config.get();
+        return config;
+    }
+
+    @Override
+    public void setConfig(ConfigSupplier<EquipmentConfig> config) {
+        this.config = config.getConfig();
     }
 
     public String getName() {

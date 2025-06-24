@@ -34,7 +34,7 @@ public class NbtUtils {
     }
 
 
-    public static Set<ResourceLocation> deserializeRLSet(CompoundTag tag){
+    public static LinkedHashSet<ResourceLocation> deserializeRLSet(CompoundTag tag){
         return deserializeSet(tag, ResourceLocation::tryParse);
     }
 }

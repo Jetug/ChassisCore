@@ -2,7 +2,7 @@ package com.jetug.chassis_core.common.foundation.entity;
 
 import com.jetug.chassis_core.client.render.utils.*;
 import com.jetug.chassis_core.common.config.ChassisConfig;
-import com.jetug.chassis_core.common.data.json.*;
+import com.jetug.chassis_core.common.config.EquipmentConfig;
 import com.jetug.chassis_core.common.events.*;
 import com.jetug.chassis_core.common.foundation.container.menu.DynamicChassisMenu;
 import com.jetug.chassis_core.common.foundation.item.*;

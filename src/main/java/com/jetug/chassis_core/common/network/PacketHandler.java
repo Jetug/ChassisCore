@@ -1,11 +1,10 @@
 package com.jetug.chassis_core.common.network;
 
 import com.jetug.chassis_core.ChassisCore;
-import com.jetug.chassis_core.common.network.managers.NetworkChassisManager;
+import com.jetug.chassis_core.common.network.managers.*;
 import com.jetug.chassis_core.common.network.packet.*;
 import com.mrcrayfish.framework.api.FrameworkAPI;
-import com.mrcrayfish.framework.api.network.FrameworkNetwork;
-import com.mrcrayfish.framework.api.network.MessageDirection;
+import com.mrcrayfish.framework.api.network.*;
 import net.minecraft.resources.ResourceLocation;
 
 public class PacketHandler {
@@ -22,8 +21,10 @@ public class PacketHandler {
 
                 .registerPlayMessage(S2CInventoryPacket.class, MessageDirection.PLAY_CLIENT_BOUND)
                 .registerPlayMessage(S2CMessageUpdateChassisConfig.class, MessageDirection.PLAY_CLIENT_BOUND)
+                .registerPlayMessage(S2CMessageUpdateEquipmentConfig.class, MessageDirection.PLAY_CLIENT_BOUND)
                 .build();
 
         FrameworkAPI.registerLoginData(ResourceLocation.tryBuild(ChassisCore.MOD_ID, "network_chassis_manager"), NetworkChassisManager.LoginData::new);
+        FrameworkAPI.registerLoginData(ResourceLocation.tryBuild(ChassisCore.MOD_ID, "network_equipment_manager"), NetworkEquipmentManager.LoginData::new);
     }
 }

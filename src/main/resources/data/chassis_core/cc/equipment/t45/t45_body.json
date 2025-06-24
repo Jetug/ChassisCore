@@ -1,8 +1,10 @@
 {
   "part": "chassis_core:body",
-  "model": "chassis_core:geo/power_armor/",
+  "parent" : "chassis_core:config/model/base/body.json",
+  "chassis": ["chassis_core:example_chassis"],
+  "model": "chassis_core:geo/power_armor/t45.geo.json",
   "texture": {
-    "default": "chassis_core:textures/power_armor/"
+    "default": "chassis_core:textures/power_armor/t45.png"
   },
 
   "uv": [155, 0, 155, 155],

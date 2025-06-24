@@ -55,7 +55,7 @@ public class ModResourceManager {
     }
 
     private void loadEquipment() {
-        for (ResourceLocation file : getJsonResources(EQUIPMENT_DIR).keySet()) {
+        for (var file : getJsonResources(EQUIPMENT_DIR).keySet()) {
             var config = getConfig(file, EquipmentConfig.class);
             if (config == null) continue;
 

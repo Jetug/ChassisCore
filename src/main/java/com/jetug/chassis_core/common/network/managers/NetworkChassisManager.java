@@ -15,9 +15,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
@@ -27,29 +24,24 @@ import java.util.*;
 
 @Mod.EventBusSubscriber(modid = ChassisCore.MOD_ID)
 public class NetworkChassisManager extends SimplePreparableReloadListener<Map<EntityType<Chassis>, ChassisConfig>> {
-    public static final String PATH = "chassis";
-//    private static final List<ChassisBase> clientRegisteredAmmo = new ArrayList<>();
+    public static final String PATH = "cc/chassis";
     private static NetworkChassisManager instance;
 
-    private Map<ResourceLocation, ChassisConfig> registeredAmmo = new HashMap<>();
+    private Map<ResourceLocation, ChassisConfig> registeredConfig = new HashMap<>();
 
-    @SubscribeEvent
-    public static void onServerStopped(ServerStoppedEvent event) {
-        NetworkChassisManager.instance = null;
+    @Nullable
+    public static NetworkChassisManager get() {
+        return instance;
     }
 
-    @SubscribeEvent
-    public static void addReloadListenerEvent(AddReloadListenerEvent event) {
+    public static void register(AddReloadListenerEvent event) {
         NetworkChassisManager networkGunManager = new NetworkChassisManager();
         event.addListener(networkGunManager);
         NetworkChassisManager.instance = networkGunManager;
     }
 
-    @SubscribeEvent
-    public static void onDatapackSync(OnDatapackSyncEvent event) {
-        if (event.getPlayer() == null) {
-            PacketHandler.getPlayChannel().sendToAll(new S2CMessageUpdateChassisConfig());
-        }
+    public static void stop() {
+        NetworkChassisManager.instance = null;
     }
 
     @Override
@@ -61,121 +53,61 @@ public class NetworkChassisManager extends SimplePreparableReloadListener<Map<En
     protected void apply(Map<EntityType<Chassis>, ChassisConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
         var builder = ImmutableMap.<ResourceLocation, ChassisConfig>builder();
 
-        objects.forEach((chassis, ammo) -> {
+        objects.forEach((chassis, config) -> {
             Validate.notNull(ForgeRegistries.ENTITY_TYPES.getKey((chassis)));
-            builder.put(ForgeRegistries.ENTITY_TYPES.getKey(chassis), ammo);
-            Configs.CHASSIS_CONFIGS.put(chassis, new ConfigSupplier<>(ammo));
+            builder.put(ForgeRegistries.ENTITY_TYPES.getKey(chassis), config);
+            Configs.CHASSIS_CONFIGS.put(chassis, new ConfigSupplier<>(config));
         });
 
-        this.registeredAmmo = builder.build();
+        this.registeredConfig = builder.build();
     }
 
-
-    public void writeRegisteredAmmo(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.registeredAmmo.size());
-        this.registeredAmmo.forEach((id, ammo) -> {
+    public void writeRegisteredConfig(FriendlyByteBuf buffer) {
+        buffer.writeVarInt(this.registeredConfig.size());
+        this.registeredConfig.forEach((id, config) -> {
             buffer.writeResourceLocation(id);
-            buffer.writeNbt(ammo.serializeNBT());
+            buffer.writeNbt(config.serializeNBT());
         });
     }
 
-    public static ImmutableMap<ResourceLocation, ChassisConfig> readRegisteredAmmo(FriendlyByteBuf buffer) {
+    public static ImmutableMap<ResourceLocation, ChassisConfig> readRegisteredConfigs(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
 
         if (size > 0) {
-            ImmutableMap.Builder<ResourceLocation, ChassisConfig> builder = ImmutableMap.builder();
+            var builder = ImmutableMap.<ResourceLocation, ChassisConfig>builder();
 
             for (int i = 0; i < size; i++) {
                 var id = buffer.readResourceLocation();
-                var ammo = ChassisConfig.create(buffer.readNbt());
-                builder.put(id, ammo);
+                var config = ChassisConfig.create(buffer.readNbt());
+                builder.put(id, config);
             }
             return builder.build();
         }
         return ImmutableMap.of();
     }
 
-    public static boolean updateRegisteredAmmo(S2CMessageUpdateChassisConfig message) {
-        return updateRegisteredAmmo(message.getRegisteredAmmo());
-    }
-
-    /**
-     * Updates registered projectile from data provided by the server
-     *
-     * @return true if all registered projectile were able to update their corresponding projectile item
-     */
-    private static boolean updateRegisteredAmmo(Map<ResourceLocation, ChassisConfig> registeredAmmo) {
-//        clientRegisteredAmmo.clear();
-        if (registeredAmmo != null) {
-            for (Map.Entry<ResourceLocation, ChassisConfig> entry : registeredAmmo.entrySet()) {
+    public static boolean updateRegisteredConfig(Map<ResourceLocation, ChassisConfig> registeredConfig) {
+        if (registeredConfig != null) {
+            for (Map.Entry<ResourceLocation, ChassisConfig> entry : registeredConfig.entrySet()) {
                 var item = ForgeRegistries.ENTITY_TYPES.getValue(entry.getKey());
-
-//                if (!(item instanceof EntityType<ChassisBase>)) {
-//                    return false;
-//                }
-
                 Configs.CHASSIS_CONFIGS.put((EntityType<Chassis>) item, new ConfigSupplier<>(entry.getValue()));
-
-//                ((EntityType<ChassisBase>) item).setConfig(new NetworkManager.Supplier<>(entry.getValue()));
-//                clientRegisteredAmmo.add((EntityType<ChassisBase>) item);
             }
             return true;
         }
         return false;
     }
 
-    /**
-     * Gets a map of all the registered projectile objects. Note, this is an immutable map.
-     *
-     * @return a map of registered projectile objects
-     */
-    public Map<ResourceLocation, ChassisConfig> getRegisteredAmmo() {
-        return this.registeredAmmo;
-    }
-
-//    /**
-//     * Gets a list of all the projectile registered on the client side. Note, this is an immutable list.
-//     *
-//     * @return a map of projectile registered on the client
-//     */
-//    public static List<EntityType<ChassisBase>> getClientRegisteredAmmo() {
-//        return ImmutableList.copyOf(clientRegisteredAmmo);
-//    }
-
-    /**
-     * Gets the network projectile manager. This will be null if the client isn't running an integrated
-     * server or the client is connected to a dedicated server.
-     *
-     * @return the network projectile manager
-     */
-    @Nullable
-    public static NetworkChassisManager get() {
-        return instance;
-    }
-
-    public static class Supplier {
-        private ChassisConfig config;
-
-        private Supplier(ChassisConfig projectile) {
-            this.config = projectile;
-        }
-
-        public ChassisConfig getAmmo() {
-            return this.config;
-        }
-    }
-
     public static class LoginData implements ILoginData {
         @Override
         public void writeData(FriendlyByteBuf buffer) {
             Validate.notNull(NetworkChassisManager.get());
-            NetworkChassisManager.get().writeRegisteredAmmo(buffer);
+            NetworkChassisManager.get().writeRegisteredConfig(buffer);
         }
 
         @Override
         public Optional<String> readData(FriendlyByteBuf buffer) {
-            var registeredAmmo = NetworkChassisManager.readRegisteredAmmo(buffer);
-            NetworkChassisManager.updateRegisteredAmmo(registeredAmmo);
+            var registeredConfig = NetworkChassisManager.readRegisteredConfigs(buffer);
+            NetworkChassisManager.updateRegisteredConfig(registeredConfig);
             return Optional.empty();
         }
     }

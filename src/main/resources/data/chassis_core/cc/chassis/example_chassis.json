@@ -1,0 +1,10 @@
+{
+  "parts": [
+    "chassis_core:head"     ,
+    "chassis_core:body"     ,
+    "chassis_core:left_arm" ,
+    "chassis_core:right_arm",
+    "chassis_core:left_leg" ,
+    "chassis_core:right_leg"
+  ]
+}

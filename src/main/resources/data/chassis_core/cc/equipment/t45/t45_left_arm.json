@@ -1,5 +1,6 @@
 {
-  "part": "left_arm",
+  "part": "chassis_core:left_arm",
+  "chassis": ["chassis_core:example_chassis"],
   "model": "chassis_core:geo/power_armor/t45.geo.json",
   "texture": {
     "default": "chassis_core:textures/power_armor/t45.png"
