@@ -34,15 +34,21 @@ public abstract class ChassisMenu extends AbstractContainerMenu {
     protected int size;
 
     public ChassisMenu(MenuType<?> pMenuType, int containerId, Inventory playerInventory, FriendlyByteBuf buf, int inventoryPosY) {
-        super(pMenuType, containerId);
-        this.chassis = (Chassis) Minecraft.getInstance().level.getEntity(buf.readInt());
-        this.container = new SimpleContainer(6);
-        this.container.startOpen(playerInventory.player);
-        this.inventoryPosY = inventoryPosY;
-        this.hotbarPosY = inventoryPosY + 58;
-        this.size = container.getContainerSize();
-        addPlayerInventory(playerInventory);
-        addPlayerHotbar(playerInventory);
+        this(pMenuType, containerId,
+                new SimpleContainer(256),
+                playerInventory,
+                (Chassis) Minecraft.getInstance().level.getEntity(buf.readInt()),
+                inventoryPosY);
+
+//        super(pMenuType, containerId);
+//        this.chassis = (Chassis) Minecraft.getInstance().level.getEntity(buf.readInt());
+//        this.container = new SimpleContainer(256);
+//        this.container.startOpen(playerInventory.player);
+//        this.inventoryPosY = inventoryPosY;
+//        this.hotbarPosY = inventoryPosY + 58;
+//        this.size = container.getContainerSize();
+//        addPlayerInventory(playerInventory);
+//        addPlayerHotbar(playerInventory);
     }
 
     public ChassisMenu(MenuType<?> pMenuType, int containerId, Container container, Inventory playerInventory,

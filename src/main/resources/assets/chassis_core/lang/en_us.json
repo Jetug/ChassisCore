@@ -32,9 +32,7 @@
   "item.chassis_core.jetpack": "Jetpack",
   "block.chassis_core.casting_table": "Casting table",
   "entity.chassis_core.power_armor": "Armor",
-  "itemGroup.xxx": "Armorpunk",
   "key.categories.armor": "Armor controls",
-  "key.dash": "Dash",
   "key.leave": "Exit armor",
   "container.armor_station": "Armor station",
   "container.casting_table": "Casting table"

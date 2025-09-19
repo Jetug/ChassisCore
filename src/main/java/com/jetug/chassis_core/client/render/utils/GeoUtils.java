@@ -78,6 +78,8 @@ public class GeoUtils {
     }
 
     public static @Nullable ResourceLocation getTextureForBone(GeoBone bone, WearableChassis animatable) {
+        if(bone == null || animatable == null) return null;
+
         var texture = animatable.getTextureForBone(bone.getName());
 
         if(texture == null){

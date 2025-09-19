@@ -19,7 +19,7 @@ public class EquipmentConfig implements INBTSerializable<CompoundTag>{
     @Optional public ResourceLocation parent;
     @Ignored public ResourceLocation model;
     @Ignored public HashMap<String, ResourceLocation> texture;
-    public int[] uv;
+    @Ignored public int[] uv;
     public String[] hide = new String[0];
     @Ignored public EquipmentAttachment[] attachments = new EquipmentAttachment[0];
     public String[] mods = new String[0];

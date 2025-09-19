@@ -3,6 +3,7 @@ package com.jetug.example.common.entities;
 import com.jetug.chassis_core.ChassisCore;
 import com.jetug.chassis_core.client.animators.HandAnimator;
 import com.jetug.chassis_core.common.foundation.entity.WearableChassis;
+import com.jetug.example.common.container.ExampleChassisMenu;
 import com.jetug.example.common.container.ExampleChassisStationMenu;
 import mod.azure.azurelib.core.animation.*;
 import mod.azure.azurelib.core.object.PlayState;

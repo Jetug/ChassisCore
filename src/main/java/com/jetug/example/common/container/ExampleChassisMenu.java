@@ -9,7 +9,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 
-import static com.jetug.example.common.registery.ContainerRegistry.EXAMPLE_CHASSIS_MENU;
+import static com.jetug.example.common.registery.ContainerRegistry.*;
 
 public class ExampleChassisMenu extends ChassisMenu {
     public static final int SIZE = 7;
