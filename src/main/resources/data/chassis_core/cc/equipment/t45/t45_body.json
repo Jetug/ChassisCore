@@ -7,7 +7,6 @@
     "default": "chassis_core:textures/power_armor/t45.png"
   },
 
-  "uv": [155, 0, 155, 155],
   "hide": ["body_bottom_frame"],
 
   "mods" : [

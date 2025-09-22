@@ -5,7 +5,6 @@
   "texture": {
     "default": "chassis_core:textures/power_armor/t45.png"
   },
-  "uv": [310, 0, 155, 155],
   "hide": ["head_frame"],
 
   "attachments": [
